@@ -10,7 +10,7 @@ export function SellerDetailView() {
     const params = useParams();
     const router = useRouter();
     const dispatch = useAppDispatch();
-    
+
     const seller = useAppSelector((state: any) => state.admin?.sellerDetail?.seller);
     const loading = useAppSelector((state: any) => state.admin?.sellerDetail?.isLoading);
     const error = useAppSelector((state: any) => state.admin?.sellerDetail?.error);
@@ -100,13 +100,22 @@ export function SellerDetailView() {
                             {seller.is_blocked ? 'Unblock' : 'Block'}
                         </button>
                         {seller.kyc_status !== 'VERIFIED' && seller.kyc_profile && (
-                            <button
-                                onClick={() => handleVerifyKyc(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl text-sm font-medium hover:bg-green-700 transition-colors"
-                            >
-                                <CheckCircle size={18} />
-                                Verify KYC
-                            </button>
+                            <>
+                                <button
+                                    onClick={() => handleVerifyKyc(true)}
+                                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl text-sm font-medium hover:bg-green-700 transition-colors"
+                                >
+                                    <CheckCircle size={18} />
+                                    Approve KYC
+                                </button>
+                                <button
+                                    onClick={() => handleVerifyKyc(false)}
+                                    className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
+                                >
+                                    <Ban size={18} />
+                                    Reject KYC
+                                </button>
+                            </>
                         )}
                         {!seller.roles.includes('SELLER') && (
                             <button
@@ -186,20 +195,50 @@ export function SellerDetailView() {
                                 <FileText size={20} />
                                 KYC Documents
                             </h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-xs text-gray-500 uppercase mb-1">Document Number</p>
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white">{seller.kyc_profile.document_number}</p>
-                                </div>
-                                {seller.kyc_profile.address && (
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <p className="text-xs text-gray-500 uppercase mb-1">Address on Document</p>
-                                        <p className="text-sm font-medium text-gray-900 dark:text-white">{seller.kyc_profile.address}</p>
+                                        <p className="text-xs text-gray-500 uppercase mb-2">Metadata</p>
+                                        <div className="space-y-2">
+                                            <div>
+                                                <p className="text-xs text-gray-500">Document Number</p>
+                                                <p className="text-sm font-medium text-gray-900 dark:text-white">{seller.kyc_profile.document_number}</p>
+                                            </div>
+                                            {seller.kyc_profile.address && (
+                                                <div>
+                                                    <p className="text-xs text-gray-500">Address on Document</p>
+                                                    <p className="text-sm font-medium text-gray-900 dark:text-white">{seller.kyc_profile.address}</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                )}
-                                <div>
-                                    <p className="text-xs text-gray-500 uppercase mb-1">Last Updated</p>
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white">{formatDate(seller.kyc_profile.updated_at)}</p>
+                                    <div>
+                                        {/* Placeholder for Liveness if we had it separately, for now relying on images */}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <h4 className="font-semibold text-gray-900 dark:text-white">Uploaded Images</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {seller.kyc_profile.id_front_url && (
+                                            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-2">
+                                                <p className="text-xs text-gray-500 mb-2">ID Front</p>
+                                                <img src={seller.kyc_profile.id_front_url} alt="ID Front" className="w-full h-auto rounded-md object-contain max-h-64" />
+                                            </div>
+                                        )}
+                                        {seller.kyc_profile.id_back_url && (
+                                            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-2">
+                                                <p className="text-xs text-gray-500 mb-2">ID Back</p>
+                                                <img src={seller.kyc_profile.id_back_url} alt="ID Back" className="w-full h-auto rounded-md object-contain max-h-64" />
+                                            </div>
+                                        )}
+                                        {seller.kyc_profile.address_proof_url && (
+                                            <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-2">
+                                                <p className="text-xs text-gray-500 mb-2">Address Proof</p>
+                                                <img src={seller.kyc_profile.address_proof_url} alt="Address Proof" className="w-full h-auto rounded-md object-contain max-h-64" />
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

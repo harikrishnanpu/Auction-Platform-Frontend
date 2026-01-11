@@ -1,46 +1,35 @@
 import api from "@/lib/axios";
-
-export interface GenerateUploadUrlRequest {
-    documentType: 'id_front' | 'id_back' | 'address_proof';
-    fileName: string;
-    contentType: string;
-}
-
-export interface GenerateUploadUrlResponse {
-    uploadUrl: string;
-    fileKey: string;
-    expiresIn: number;
-}
-
-export interface CompleteUploadRequest {
-    documentType: 'id_front' | 'id_back' | 'address_proof';
-    fileKey: string;
-    documentTypeName?: string;
-    documentNumber?: string;
-    address?: string;
-}
+import axios from "axios";
 
 export const kycService = {
-    async generateUploadUrl(data: GenerateUploadUrlRequest): Promise<GenerateUploadUrlResponse> {
-        const response = await api.post<GenerateUploadUrlResponse>('/kyc/upload-url', data);
+    async generateUploadUrl(data: { documentType: string; fileName: string; contentType: string }) {
+        const response = await api.post<{ uploadUrl: string; fileKey: string }>(`/kyc/upload-url`, data);
         return response.data;
     },
 
-    async completeUpload(data: CompleteUploadRequest): Promise<void> {
-        await api.post('/kyc/complete-upload', data);
-    },
-
-    async uploadFileToS3(file: File, uploadUrl: string): Promise<void> {
-        const response = await fetch(uploadUrl, {
-            method: 'PUT',
-            body: file,
+    async uploadFileToS3(file: File, uploadUrl: string) {
+        // Upload directly to S3 using the pre-signed URL
+        // Note: Do not use the main 'api' instance because it adds Authorization headers which S3 might reject
+        // or formatting that S3 doesn't like. Use plain axios.
+        await axios.put(uploadUrl, file, {
             headers: {
-                'Content-Type': file.type,
-            },
+                'Content-Type': file.type
+            }
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to upload file to S3');
-        }
     },
+
+    async completeUpload(data: { documentType: string; fileKey: string; documentTypeName?: string; documentNumber?: string; address?: string }) {
+        const response = await api.post<{ message: string }>(`/kyc/complete-upload`, data);
+        return response.data;
+    },
+
+    async getStatus() {
+        const response = await api.get<{ status: string; profile: any }>(`/kyc/status`);
+        return response.data;
+    },
+
+    async submitKyc() {
+        const response = await api.post<{ message: string }>(`/kyc/submit`, {});
+        return response.data;
+    }
 };

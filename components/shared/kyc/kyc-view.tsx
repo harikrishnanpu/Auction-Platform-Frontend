@@ -4,12 +4,12 @@ import React from "react";
 import { ArrowRight } from "lucide-react";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { PersonalInfo } from "@/components/shared/kyc/personal-info";
-import { DocumentUpload } from "@/components/shared/kyc/document-upload";
-import { LivenessCheck } from "@/components/shared/kyc/liveness-check";
-import { KycStatus } from "@/components/shared/kyc/kyc-status";
+import { PersonalInfo } from "./personal-info";
+import { DocumentUpload } from "./document-upload";
+import { LivenessCheck } from "./liveness-check";
+import { KycStatus } from "./kyc-status";
 
-export function ModeratorKycView() {
+export function SellerKycView() {
     return (
         <div className="min-h-screen font-sans transition-colors duration-300 bg-background text-foreground">
             {/* Background Gradient */}
@@ -20,10 +20,11 @@ export function ModeratorKycView() {
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-foreground mb-2 font-serif">
-                        Moderator KYC Verification
+                        Seller KYC Verification
                     </h1>
                     <p className="text-muted-foreground">
-                        Complete your identity verification to access moderator privileges and high-value auction management.
+                        Complete your identity verification to unlock selling privileges and
+                        list high-value luxury assets.
                     </p>
                 </div>
 

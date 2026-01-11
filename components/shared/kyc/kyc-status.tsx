@@ -6,7 +6,11 @@ import {
     Headset,
 } from "lucide-react";
 
-export function KycStatus() {
+interface KycStatusProps {
+    status?: string;
+}
+
+export function KycStatus({ status = 'INITIAL' }: KycStatusProps) {
     return (
         <div className="space-y-6">
             {/* KYC Status Card */}
@@ -15,28 +19,42 @@ export function KycStatus() {
                     KYC Status
                 </h3>
                 <div className="text-center py-6">
-                    <div className="w-20 h-20 mx-auto bg-yellow-100 dark:bg-yellow-900/20 rounded-full flex items-center justify-center mb-3">
-                        <Loader
-                            className="text-yellow-600 dark:text-yellow-400 animate-spin"
-                            size={32}
-                        />
+                    <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-3 ${status === 'VERIFIED' ? 'bg-green-100 dark:bg-green-900/20 text-green-600' :
+                            status === 'REJECTED' ? 'bg-red-100 dark:bg-red-900/20 text-red-600' :
+                                status === 'PENDING' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600' :
+                                    'bg-blue-100 dark:bg-blue-900/20 text-blue-600'
+                        }`}>
+                        {status === 'VERIFIED' ? <CheckCircle size={32} /> :
+                            status === 'REJECTED' ? <CircleDot size={32} /> :
+                                status === 'PENDING' ? <Loader className="animate-spin" size={32} /> :
+                                    <Circle size={32} />}
                     </div>
-                    <h4 className="text-xl font-bold text-foreground">In Progress</h4>
+                    <h4 className="text-xl font-bold text-foreground">
+                        {status === 'VERIFIED' ? 'Verified' :
+                            status === 'REJECTED' ? 'Application Rejected' :
+                                status === 'PENDING' ? 'In Review' :
+                                    'Application Started'}
+                    </h4>
                     <p className="text-sm text-muted-foreground mt-1">
-                        Est. completion:{" "}
-                        <span className="font-semibold text-foreground">24 Hours</span>
+                        {status === 'PENDING' ? 'Est. completion: 24 Hours' :
+                            status === 'VERIFIED' ? 'You are approved to sell!' :
+                                status === 'REJECTED' ? 'Please check your email for details.' :
+                                    'Complete tasks to submit'}
                     </p>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2.5 mb-2 mt-2">
                     <div
-                        className="bg-foreground h-2.5 rounded-full"
-                        style={{ width: "65%" }}
+                        className={`h-2.5 rounded-full ${status === 'VERIFIED' ? 'bg-green-500 w-full' :
+                                status === 'REJECTED' ? 'bg-red-500 w-full' :
+                                    status === 'PENDING' ? 'bg-yellow-500 w-[65%]' :
+                                        'bg-blue-500 w-[10%]'
+                            }`}
                     ></div>
                 </div>
                 <div className="flex justify-between text-xs text-muted-foreground font-medium">
-                    <span>Submitted</span>
-                    <span>Review</span>
-                    <span>Approved</span>
+                    <span className={status !== 'INITIAL' ? 'text-primary' : ''}>Submitted</span>
+                    <span className={status === 'PENDING' || status === 'VERIFIED' || status === 'REJECTED' ? 'text-primary' : ''}>Review</span>
+                    <span className={status === 'VERIFIED' ? 'text-green-600' : ''}>Approved</span>
                 </div>
             </div>
 

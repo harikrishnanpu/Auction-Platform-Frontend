@@ -46,6 +46,11 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
         // the main requirement is guarding these specific pages against logged in users.
         // And guarding protected pages against logged out users.
 
+        // Skip auth check for admin routes (admin has separate auth)
+        if (pathname.startsWith('/admin')) {
+            return;
+        }
+
         if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
             // Check if it's a verify page with query params? No, strict check on pathname.
             // But pathname doesn't include query params.
@@ -54,7 +59,7 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
             // Wait, verifyEmailThunk logs them in. BEFORE verification, they are NOT logged in.
             // So /email must be public.
 
-            router.push('/');
+            // router.push('/login');
         }
     }, [isInitialized, isAuthenticated, pathname, router]);
 

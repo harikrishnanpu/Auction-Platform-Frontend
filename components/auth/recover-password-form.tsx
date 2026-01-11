@@ -5,7 +5,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Lock, Mail, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
-import { forgotPasswordSchema, type ForgotPasswordValues } from "@/lib/validations/auth";
+import { authService } from "@/features/auth/services/auth.service";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { forgotPasswordSchema, type ForgotPasswordValues } from "@/features/auth/schemes/register-schema";
 
 type ViewState = "forgot" | "otp";
 
@@ -18,7 +21,13 @@ export function RecoverPasswordForm() {
     const [timeLeft, setTimeLeft] = useState(30);
     const [isActive, setIsActive] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    // New Password State
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    const router = useRouter();
 
     // Form handling for Email step
     const {
@@ -50,24 +59,59 @@ export function RecoverPasswordForm() {
 
     const onEmailSubmit = async (data: ForgotPasswordValues) => {
         setIsLoading(true);
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log("Password reset requested for:", data.email);
-        setEmail(data.email);
-        setView("otp");
-        setIsActive(true);
-        setTimeLeft(30);
-        setIsLoading(false);
+        try {
+            const response = await authService.forgotPassword({ email: data.email });
+            if (response.success) {
+                toast.success(response.message);
+                setEmail(data.email);
+                setView("otp");
+                setIsActive(true);
+                setTimeLeft(30);
+            } else {
+                toast.error("Failed to send reset code.");
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Something went wrong");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const onOtpSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (newPassword !== confirmPassword) {
+            toast.error("Passwords do not match");
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            toast.error("Password must be at least 6 characters");
+            return;
+        }
+
         setIsLoading(true);
         const otpValue = otp.join("");
         console.log("Verifying Recovery OTP:", otpValue);
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setIsLoading(false);
+
+        try {
+            const response = await authService.resetPassword({
+                email,
+                otp: otpValue,
+                newPassword
+            });
+
+            if (response.success) {
+                toast.success("Password reset successfully! Please login.");
+                router.push("/login");
+            } else {
+                toast.error(response.message || "Failed to reset password");
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Invalid OTP or request failed");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleOtpChange = (element: HTMLInputElement, index: number) => {
@@ -141,6 +185,30 @@ export function RecoverPasswordForm() {
                             />
                         ))}
                     </div>
+
+                    {/* New Password Fields */}
+                    <div className="space-y-4 px-2">
+                        <div>
+                            <label className="text-xs font-bold uppercase text-muted-foreground">New Password</label>
+                            <input
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="w-full p-3 rounded-lg bg-background border border-input outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="******"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold uppercase text-muted-foreground">Confirm Password</label>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                className="w-full p-3 rounded-lg bg-background border border-input outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="******"
+                            />
+                        </div>
+                    </div>
                     <div className="text-center">
                         <Button
                             type="submit"
@@ -155,7 +223,7 @@ export function RecoverPasswordForm() {
                             ) : (
                                 <>
                                     <span className="w-1.5 h-1.5 rounded-full bg-background animate-pulse mr-2"></span>
-                                    Verify Code
+                                    Reset Password
                                 </>
                             )}
                         </Button>
