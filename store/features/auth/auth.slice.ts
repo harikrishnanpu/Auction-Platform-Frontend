@@ -62,11 +62,13 @@ const authSlice = createSlice({
         builder.addCase(registerUserThunk.pending, (state) => {
             state.isLoading = true;
             state.error = null;
-        }).addCase(registerUserThunk.fulfilled, (state, action: PayloadAction<RegisterResponse>) => {
+        }).addCase(registerUserThunk.fulfilled, (state) => {
             state.isLoading = false;
             state.error = null;
-            state.user = action.payload.user;
-            state.isAuthenticated = true;
+            // Registration successful, but NOT authenticated yet.
+            // User needs to verify email.
+            state.isAuthenticated = false;
+            state.user = null;
         }).addCase(registerUserThunk.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.payload as string || 'Registration failed';
@@ -100,9 +102,9 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.user = null;
             state.isAuthenticated = false;
-            localStorage.removeItem('token');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
+            // Do not clear tokens here. 
+            // If it's a 401, the axios interceptor will handle logout/clearing.
+            // If it's a network error, we want to keep the token to retry later.
         }).addCase(verifyEmailThunk.pending, (state) => {
             state.isLoading = true;
             state.error = null;

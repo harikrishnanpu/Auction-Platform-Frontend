@@ -15,9 +15,14 @@ export const authService = {
         return response.data;
     },
 
+    async loginAdmin(data: LoginFormValues) {
+        const response = await api.post<{ success: boolean, message: string, user: any }>(`/admin/auth/login`, data);
+        return response.data;
+    },
+
     async getCurrentUser() {
-        const response = await api.get<{ data: { user: User } }>(`/user/auth/me`);
-        return response.data.data.user;
+        const response = await api.get<{ success: boolean, user: User }>(`/user/auth/me`);
+        return response.data.user;
     },
 
     async verifyEmail(data: { email: string; otp: string }) {

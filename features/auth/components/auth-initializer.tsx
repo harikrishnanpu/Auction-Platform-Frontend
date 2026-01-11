@@ -58,7 +58,14 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
         }
     }, [isInitialized, isAuthenticated, pathname, router]);
 
-    if (!isInitialized || (isLoading && !isAuthenticated && localStorage.getItem('token'))) {
+    // Show loader if:
+    // 1. Not initialized yet
+    // 2. Loading state is true
+    // 3. Authenticated but on a public route (Redirecting...)
+    // 4. Checking token from localStorage
+    const isRedirecting = isAuthenticated && PUBLIC_ROUTES.includes(pathname);
+
+    if (!isInitialized || (isLoading && !isAuthenticated && localStorage.getItem('token')) || isRedirecting) {
         // Show loader while initializing or valid token being checked
         return (
             <div className="h-screen w-full flex items-center justify-center bg-background">
