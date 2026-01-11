@@ -1,0 +1,301 @@
+"use client";
+
+import React from "react";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import {
+    Sun,
+    Moon,
+    ShieldCheck,
+    Gavel,
+    MessageSquare,
+    PackageCheck,
+    Headset,
+    Check,
+    ArrowRight,
+    Info,
+} from "lucide-react";
+import { SiteFooter } from "@/components/layout/site-footer";
+
+export function ModeratorLandingView() {
+    const { theme, setTheme } = useTheme();
+    // Safe toggle for hydration mismatch prevention
+    const isDark = theme === "dark";
+
+    return (
+        <div className="min-h-screen font-sans transition-colors duration-300 bg-blue-50/50 dark:bg-slate-950 text-foreground flex flex-col">
+            {/* Navigation */}
+            <nav className="w-full px-8 py-6 flex justify-between items-center relative z-10 max-w-7xl mx-auto">
+                <Link
+                    href="/home"
+                    className="flex items-center gap-2 cursor-pointer group"
+                >
+                    <div className="font-bold text-2xl tracking-tight font-serif text-foreground group-hover:opacity-80 transition-opacity">
+                        Hammr.Down
+                    </div>
+                </Link>
+                <div className="flex items-center gap-6">
+                    <button
+                        className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-foreground"
+                        onClick={() => setTheme(isDark ? "light" : "dark")}
+                    >
+                        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                        <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                        <span className="sr-only">Toggle theme</span>
+                    </button>
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-400 to-purple-400 border-2 border-white/20 shadow-sm"></div>
+                </div>
+            </nav>
+
+            <main className="max-w-6xl mx-auto px-6 py-8 pb-20 animate-in fade-in duration-500 flex-grow">
+                {/* Hero Section */}
+                <div className="relative mb-12 text-center max-w-2xl mx-auto">
+                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-64 h-64 bg-blue-200/50 dark:bg-blue-900/20 rounded-full blur-3xl -z-10"></div>
+                    <span className="inline-block py-1 px-3 rounded-full bg-background border border-border text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm text-muted-foreground">
+                        Join the Team
+                    </span>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight font-serif text-foreground">
+                        Become a HammerDown <br />
+                        Moderator
+                    </h1>
+                    <p className="text-muted-foreground text-lg leading-relaxed">
+                        Help us maintain trust and integrity in the world's most exclusive
+                        luxury auction marketplace.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Main Content (Left) */}
+                    <div className="lg:col-span-8 space-y-6">
+                        {/* Core Responsibilities Card */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm border border-border">
+                            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3 font-serif text-foreground">
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                                    <ShieldCheck size={16} />
+                                </span>
+                                Core Responsibilities
+                            </h2>
+
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="p-4 rounded-xl bg-muted/50 border border-border">
+                                    <Gavel className="text-foreground mb-3" size={24} />
+                                    <h3 className="font-semibold text-lg mb-2 text-foreground">
+                                        Bid Verification
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Monitor high-value bids in real-time to ensure authenticity
+                                        and prevent market manipulation.
+                                    </p>
+                                </div>
+                                <div className="p-4 rounded-xl bg-muted/50 border border-border">
+                                    <MessageSquare className="text-foreground mb-3" size={24} />
+                                    <h3 className="font-semibold text-lg mb-2 text-foreground">
+                                        Community Oversight
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Manage live chat environments during auctions, enforcing
+                                        community guidelines respectfully.
+                                    </p>
+                                </div>
+                                <div className="p-4 rounded-xl bg-muted/50 border border-border">
+                                    <PackageCheck className="text-foreground mb-3" size={24} />
+                                    <h3 className="font-semibold text-lg mb-2 text-foreground">
+                                        Asset Validation
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Assist the authentication team by reviewing preliminary
+                                        asset documentation uploads.
+                                    </p>
+                                </div>
+                                <div className="p-4 rounded-xl bg-muted/50 border border-border">
+                                    <Headset className="text-foreground mb-3" size={24} />
+                                    <h3 className="font-semibold text-lg mb-2 text-foreground">
+                                        Dispute Resolution
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Act as a first point of contact for dispute escalation
+                                        between buyers and sellers.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Moderator Agreement Card */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-sm border border-border">
+                            <h2 className="text-2xl font-semibold mb-6 font-serif text-foreground">
+                                Moderator Agreement
+                            </h2>
+                            <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground mb-6 h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border">
+                                <p>
+                                    By applying to become a moderator on HammerDown, you agree to
+                                    uphold the highest standards of integrity and confidentiality.
+                                    Our platform deals in high-value assets, and discretion is
+                                    paramount.
+                                </p>
+                                <p>
+                                    <strong>1. Confidentiality:</strong> You agree not to disclose
+                                    any user identities, bid amounts, or asset details outside of
+                                    the official platform channels.
+                                </p>
+                                <p>
+                                    <strong>2. Neutrality:</strong> You must remain impartial in
+                                    all disputes and cannot bid on auctions you are actively
+                                    moderating.
+                                </p>
+                                <p>
+                                    <strong>3. Availability:</strong> Moderators are expected to
+                                    be available for at least one major auction event per week
+                                    (approx. 2-4 hours).
+                                </p>
+                                <p>
+                                    <strong>4. Code of Conduct:</strong> You will treat all
+                                    members with respect and professionalism, regardless of the
+                                    situation.
+                                </p>
+                                <p>
+                                    Failure to adhere to these guidelines will result in immediate
+                                    revocation of moderator privileges.
+                                </p>
+                            </div>
+                            <label className="flex items-start gap-3 cursor-pointer group">
+                                <div className="relative flex items-center">
+                                    <input
+                                        className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-input bg-background checked:bg-foreground checked:border-foreground transition-all"
+                                        type="checkbox"
+                                    />
+                                    <span className="absolute text-background opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                        <Check size={14} strokeWidth={3} />
+                                    </span>
+                                </div>
+                                <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors select-none pt-0.5">
+                                    I have read and agree to the Moderator Terms of Service and Code of Conduct.
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    {/* Sidebar (Right) */}
+                    <div className="lg:col-span-4 space-y-6">
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-border sticky top-6">
+                            {/* Profile Section */}
+                            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
+                                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-background shadow-sm">
+                                    {/* Placeholder avatar */}
+                                    <span className="text-xl font-bold text-muted-foreground">
+                                        HS
+                                    </span>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-lg text-foreground font-serif">
+                                        Hari S.
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        Member since 2021
+                                    </p>
+                                    <div className="mt-1 flex items-center gap-1 text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2 py-0.5 rounded-md w-fit">
+                                        <ShieldCheck size={12} /> Verified ID
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Trust Score */}
+                            <div className="space-y-4 mb-8">
+                                <div>
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                                        Trust Score
+                                    </p>
+                                    <div className="flex items-end gap-2 mb-1">
+                                        <span className="text-3xl font-bold text-foreground">
+                                            98
+                                            <span className="text-lg text-muted-foreground font-normal">
+                                                /100
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                                        <div
+                                            className="bg-green-500 h-1.5 rounded-full"
+                                            style={{ width: "98%" }}
+                                        ></div>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-2">
+                                        Your high trust score makes you eligible for moderation.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="space-y-3">
+                                <button className="w-full bg-foreground hover:bg-foreground/90 text-background py-3.5 px-6 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center gap-2 group">
+                                    Submit Application{" "}
+                                    <ArrowRight
+                                        size={16}
+                                        className="transition-transform group-hover:translate-x-1"
+                                    />
+                                </button>
+                                <button className="w-full bg-transparent hover:bg-muted text-foreground py-3.5 px-6 rounded-xl font-medium transition-all border border-input">
+                                    Save for Later
+                                </button>
+                            </div>
+
+                            {/* Info Box */}
+                            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                                <div className="flex gap-3">
+                                    <Info
+                                        className="text-blue-600 dark:text-blue-400 flex-shrink-0"
+                                        size={20}
+                                    />
+                                    <div className="text-sm text-blue-800 dark:text-blue-200">
+                                        <p className="font-medium mb-1">Approval Process</p>
+                                        <p className="opacity-80 text-xs">
+                                            Applications are reviewed within 48 hours. You will be
+                                            notified via email.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* FAQ Section */}
+                <div className="mt-16 border-t border-border pt-12">
+                    <h3 className="text-2xl font-semibold mb-8 text-center font-serif text-foreground">
+                        Common Questions
+                    </h3>
+                    <div className="grid md:grid-cols-3 gap-6">
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-border">
+                            <h4 className="font-semibold mb-2 text-foreground">
+                                Is this a paid role?
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                                Yes, moderators receive credits that can be used on the platform
+                                or withdrawn as currency.
+                            </p>
+                        </div>
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-border">
+                            <h4 className="font-semibold mb-2 text-foreground">
+                                What is the time commitment?
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                                It's flexible. You sign up for auction slots that fit your
+                                schedule, minimum 2 hours/week.
+                            </p>
+                        </div>
+                        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-border">
+                            <h4 className="font-semibold mb-2 text-foreground">
+                                Do I need prior experience?
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                                While experience is preferred, we provide a comprehensive
+                                training module for all new mods.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <SiteFooter />
+        </div>
+    );
+}
