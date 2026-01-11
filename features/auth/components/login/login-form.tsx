@@ -56,7 +56,7 @@ const LoginForm = () => {
                         <div className="flex justify-between items-center ml-1">
                             <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Password</label>
                             <a
-                                href="/auth/recover-password"
+                                href="/recover/password"
                                 className="text-xs font-semibold text-black dark:text-white hover:underline"
                             >
                                 Forgot Password?

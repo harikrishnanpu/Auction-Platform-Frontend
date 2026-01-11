@@ -6,7 +6,7 @@ import {
     Mail, Edit, MapPin, Phone, ShieldCheck, Flag, AlertTriangle, Wallet, TrendingUp,
     CheckCircle, ArrowLeft, Ban
 } from 'lucide-react';
-import axios from '@/lib/axios';
+import api from '@/lib/axios';
 
 interface UserDetail {
     id: string;
@@ -39,7 +39,7 @@ const AdminUserDetail = () => {
     const fetchUser = async (id: string) => {
         try {
             setLoading(true);
-            const response = await axios.get(`/api/admin/users/${id}`);
+            const response = await api.get(`/admin/users/${id}`);
             setUser(response.data);
         } catch (err: any) {
             setError(err.response?.data?.message || 'Failed to fetch user details');

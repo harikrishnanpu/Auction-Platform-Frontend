@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginFormValues } from '@/lib/validations/auth';
-import api from '@/lib/axios';
-import { setCredentials } from '@/store/features/auth/auth.slice';
 import { Shield, Lock, AlertCircle, ArrowRight } from 'lucide-react';
+import { LoginFormValues, loginSchema } from '@/features/auth/schemes/register-schema';
+import { loginAdminThunk } from '@/store/features/admin/admin-auth.thunk';
+import { useAppDispatch } from '@/store/hooks/hooks';
 
 const AdminLoginPage = () => {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const {
         register,
@@ -31,21 +30,14 @@ const AdminLoginPage = () => {
     const onSubmit = async (data: LoginFormValues) => {
         setLoading(true);
         try {
-            // Note: Using the specific admin login endpoint
-            const response = await api.post('/admin/login', data);
+            const result = await dispatch(loginAdminThunk(data)).unwrap();
 
-            const user = response.data.user || response.data;
-
-            dispatch(setCredentials({
-                user: user
-            }));
-
-            // Force redirect to admin dashboard
-            router.push('/admin');
+            // Redirect happens after state update
+            router.push('/admin/dashboard');
         } catch (error: any) {
             console.error(error);
             setError('root', {
-                message: error.response?.data?.message || 'Access Denied. Admin privileges required.'
+                message: error || 'Access Denied. Admin privileges required.'
             });
         } finally {
             setLoading(false);

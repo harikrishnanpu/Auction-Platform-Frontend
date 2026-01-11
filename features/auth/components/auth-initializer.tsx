@@ -46,6 +46,11 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
         // the main requirement is guarding these specific pages against logged in users.
         // And guarding protected pages against logged out users.
 
+        // Skip auth check for admin routes (admin has separate auth)
+        if (pathname.startsWith('/admin')) {
+            return;
+        }
+
         if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
             // Check if it's a verify page with query params? No, strict check on pathname.
             // But pathname doesn't include query params.
@@ -54,11 +59,18 @@ export default function AuthInitializer({ children }: { children: React.ReactNod
             // Wait, verifyEmailThunk logs them in. BEFORE verification, they are NOT logged in.
             // So /email must be public.
 
-            router.push('/');
+            // router.push('/login');
         }
     }, [isInitialized, isAuthenticated, pathname, router]);
 
-    if (!isInitialized || (isLoading && !isAuthenticated && localStorage.getItem('token'))) {
+    // Show loader if:
+    // 1. Not initialized yet
+    // 2. Loading state is true
+    // 3. Authenticated but on a public route (Redirecting...)
+    // 4. Checking token from localStorage
+    const isRedirecting = isAuthenticated && PUBLIC_ROUTES.includes(pathname);
+
+    if (!isInitialized || (isLoading && !isAuthenticated && localStorage.getItem('token')) || isRedirecting) {
         // Show loader while initializing or valid token being checked
         return (
             <div className="h-screen w-full flex items-center justify-center bg-background">

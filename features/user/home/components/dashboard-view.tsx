@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
 import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
+import { RootState } from "@/store";
 
 export function DashboardView() {
     const { user } = useSelector((state: RootState) => state.auth);
