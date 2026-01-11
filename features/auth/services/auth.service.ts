@@ -16,8 +16,8 @@ export const authService = {
     },
 
     async loginAdmin(data: LoginFormValues) {
-        const response = await api.post<{ success: boolean, message: string, user: any }>(`/admin/auth/login`, data);
-        return response.data;
+        const response = await api.post<{ message: string, user: any }>(`/admin/auth/login`, data);
+        return { success: true, message: response.data.message, user: response.data.user };
     },
 
     async getCurrentUser() {

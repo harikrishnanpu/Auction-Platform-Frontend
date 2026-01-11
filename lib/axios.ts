@@ -8,7 +8,14 @@ const api = axios.create({
 
 
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
+    // Check if this is an admin route
+    const isAdminRoute = config.url?.startsWith('/admin/');
+    
+    // Use admin token for admin routes, regular token for other routes
+    const token = isAdminRoute 
+        ? localStorage.getItem('adminToken')
+        : localStorage.getItem('token');
+    
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }

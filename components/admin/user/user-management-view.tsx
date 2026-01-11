@@ -1,37 +1,36 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft, Plus, Download } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import axios from "@/lib/axios";
+import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
+import { getUsersThunk, blockUserThunk } from "@/store/features/admin/admin.thunk";
 import { UserStats } from "./user-stats";
 import { UserFilters } from "./user-filters";
 import { UserTable } from "./user-table";
 
 export function UserManagementView() {
-    const [users, setUsers] = React.useState([]);
-    const [loading, setLoading] = React.useState(true);
+    const dispatch = useAppDispatch();
     const [page, setPage] = React.useState(1);
-    const [totalPages, setTotalPages] = React.useState(1);
-    const [totalUsers, setTotalUsers] = React.useState(0);
-
-    const fetchUsers = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.get(`/api/admin/users?page=${page}&limit=10`);
-            setUsers(response.data.users);
-            setTotalPages(response.data.totalPages);
-            setTotalUsers(response.data.total);
-        } catch (error) {
-            console.error("Failed to fetch users", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    
+    const users = useAppSelector((state: any) => state.admin?.users?.users || []);
+    const loading = useAppSelector((state: any) => state.admin?.users?.isLoading || false);
+    const totalPages = useAppSelector((state: any) => state.admin?.users?.totalPages || 1);
+    const totalUsers = useAppSelector((state: any) => state.admin?.users?.total || 0);
 
     React.useEffect(() => {
-        fetchUsers();
-    }, [page]);
+        dispatch(getUsersThunk({ page, limit: 10 }));
+    }, [page, dispatch]);
+
+    const handleBlockUser = async (id: string, block: boolean) => {
+        try {
+            await dispatch(blockUserThunk({ id, block })).unwrap();
+            // Refresh users list
+            dispatch(getUsersThunk({ page, limit: 10 }));
+        } catch (error) {
+            console.error("Failed to block/unblock user", error);
+        }
+    };
 
     return (
         <div className="font-sans transition-colors duration-300 bg-background text-foreground animate-in fade-in duration-500">
@@ -69,6 +68,7 @@ export function UserManagementView() {
                 totalPages={totalPages}
                 onPageChange={setPage}
                 totalUsers={totalUsers}
+                onBlockUser={handleBlockUser}
             />
         </div>
     );

@@ -33,7 +33,7 @@ const AdminLoginPage = () => {
             const result = await dispatch(loginAdminThunk(data)).unwrap();
 
             // Redirect happens after state update
-            router.push('/admin');
+            router.push('/admin/dashboard');
         } catch (error: any) {
             console.error(error);
             setError('root', {

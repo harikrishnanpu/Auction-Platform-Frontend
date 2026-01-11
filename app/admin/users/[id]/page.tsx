@@ -39,7 +39,7 @@ const AdminUserDetail = () => {
     const fetchUser = async (id: string) => {
         try {
             setLoading(true);
-            const response = await axios.get(`/api/admin/users/${id}`);
+            const response = await axios.get(`/admin/users/${id}`);
             setUser(response.data);
         } catch (err: any) {
             setError(err.response?.data?.message || 'Failed to fetch user details');
