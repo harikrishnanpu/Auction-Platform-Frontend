@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormValues } from '@/lib/validations/auth';
 import api from '@/lib/axios';
-import { setCredentials } from '@/store/slices/auth/auth.slice';
+import { setCredentials } from '@/store/features/auth/auth.slice';
 import { Shield, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 
 const AdminLoginPage = () => {

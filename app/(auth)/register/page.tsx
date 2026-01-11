@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import { RegisterForm } from "@/features/auth/components/register/register-form";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import TestimonialCard from "@/components/marketing/TestimonialCard";
 import AuthNavbar from "@/components/layout/navbars/AuthNavbar";
+import { useAppSelector } from "@/store/hooks/hooks";
 
 export default function RegisterPage() {
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,7 +26,7 @@ export default function RegisterPage() {
       <main className="min-h-screen flex items-center justify-center p-4 py-20 relative">
         <div className="absolute top-0 left-0 w-full h-96 bg-linear-to-b from-blue-100/50 to-transparent dark:from-blue-900/10 pointer-events-none"></div>
         <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center relative z-10">
-          
+
           {/* Left Side - Marketing Content */}
           <TestimonialCard />
 
@@ -54,7 +53,7 @@ export default function RegisterPage() {
               <RegisterForm />
             </div>
           </div>
-          
+
         </div>
       </main>
     </div>
