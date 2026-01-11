@@ -1,19 +1,18 @@
 'use client';
 
-import { Provider } from 'react-redux';
 import { ThemeProvider } from 'next-themes';
 import React from 'react';
-import AuthInitializer from '@/components/auth/auth-initializer';
-import { store } from '@/store/store';
+import AuthInitializer from '@/features/auth/components/auth-initializer';
+import StoreProvider from './store-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <Provider store={store}>
+        <StoreProvider>
             <AuthInitializer>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                     {children}
                 </ThemeProvider>
             </AuthInitializer>
-        </Provider>
+        </StoreProvider>
     );
 }

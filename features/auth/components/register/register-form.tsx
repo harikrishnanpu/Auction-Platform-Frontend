@@ -11,9 +11,9 @@ export function RegisterForm() {
 
     const [showPassword, setShowPassword] = useState(false);
 
-    const { register, handleSubmit, formState: { errors }, isLoading, onSubmit  } = useRegister();
+    const { register, handleSubmit, errors, isSubmitting, onSubmit } = useRegister();
 
-   
+
 
     return (
 
@@ -106,7 +106,7 @@ export function RegisterForm() {
                 )}
             </div>
 
-            
+
 
             <div className="space-y-1">
                 <label
@@ -194,10 +194,10 @@ export function RegisterForm() {
 
             <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isSubmitting}
                 className="w-full h-12 text-sm font-semibold rounded-xl bg-foreground text-background hover:bg-foreground/90 transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg"
             >
-                {isLoading ? (
+                {isSubmitting ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
                 ) : (
                     "Create Account"
@@ -215,7 +215,7 @@ export function RegisterForm() {
                 </div>
 
                 <div className="mt-6 grid grid-cols-1 gap-3">
-                  <SiginWithGoogleButton handleClick={()=> {}} />
+                    <SiginWithGoogleButton handleClick={() => { }} />
                 </div>
             </div>
 

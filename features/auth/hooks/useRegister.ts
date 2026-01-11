@@ -1,62 +1,53 @@
 
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterFormValues } from "../schemes/register-schema";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { registerUserThunk } from "@/store/features/auth/auth.thunk";
+import { useAppDispatch } from "@/store/hooks/hooks";
 
 export const useRegister = () => {
-    
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const {
-        register,
-        handleSubmit,
-        setError,
-        formState,
-    } = useForm<RegisterFormValues>({
-        resolver: zodResolver(registerSchema),
-        defaultValues: {
-            firstName: "",
-            lastName: "",
-            email: "",
-            phone: "",
-            address: "",
-            password: "",
-            terms: undefined,
-        },
-    });
-
-
-
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      address: "",
+      password: "",
+      terms: undefined,
+    },
+  });
 
   const onSubmit = async (data: RegisterFormValues) => {
     try {
-      setIsLoading(true);
-
-      
-
-      
-
+      await dispatch(registerUserThunk(data)).unwrap();
+      router.push(`/email?email=${encodeURIComponent(data.email)}`);
     } catch (err) {
-
-
-
       console.log("Registration Failed", err);
-
-    } finally {
-      setIsLoading(false);
+      setError("root", {
+        type: "server",
+        message: typeof err === 'string' ? err : "Registration failed. Please try again."
+      });
     }
   };
 
   return {
     register,
     handleSubmit,
-    formState,
+    errors,
+    isSubmitting,
     setError,
-    onSubmit,   
-    isLoading,  
+    onSubmit,
   };
-    
-    
+
 };

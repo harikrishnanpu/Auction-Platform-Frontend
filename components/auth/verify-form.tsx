@@ -7,25 +7,21 @@ import { Button } from "@/components/ui/buttons/button";
 export function VerifyForm() {
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [timeLeft, setTimeLeft] = useState(30);
-    const [isActive, setIsActive] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     // Timer logic
     useEffect(() => {
         let interval: NodeJS.Timeout | null = null;
-        if (isActive && timeLeft > 0) {
+        if (timeLeft > 0) {
             interval = setInterval(() => {
                 setTimeLeft((prevTime) => prevTime - 1);
             }, 1000);
-        } else if (timeLeft === 0) {
-            setIsActive(false);
-            if (interval) clearInterval(interval);
         }
         return () => {
             if (interval) clearInterval(interval);
         };
-    }, [isActive, timeLeft]);
+    }, [timeLeft]);
 
     const handleChange = (element: HTMLInputElement, index: number) => {
         if (isNaN(Number(element.value))) return false;
@@ -68,7 +64,6 @@ export function VerifyForm() {
 
     const handleResend = () => {
         setTimeLeft(30);
-        setIsActive(true);
         setOtp(["", "", "", "", "", ""]);
         inputRefs.current[0]?.focus();
     };

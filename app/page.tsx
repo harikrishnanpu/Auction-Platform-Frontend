@@ -10,7 +10,7 @@ import { FeaturesSection } from '@/features/landing/components/FeaturesSection';
 import { CTASection } from '@/features/landing/components/CTASection';
 import { WhyUsSection } from '@/features/landing/components/WhyUsSection';
 import { LandingFooter } from '@/components/layout/footers/landingFooter';
-import { RootState } from '@/store/store';
+import { RootState } from '@/store';
 
 export default function LandingPage() {
 

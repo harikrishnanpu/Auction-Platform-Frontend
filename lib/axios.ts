@@ -1,9 +1,7 @@
 import axios from 'axios';
-import { setCredentials, logout } from '@/store/slices/auth/auth.slice';
-import { store } from '@/store/store';
 
 const api = axios.create({
-    baseURL: 'http://localhost:4000/api',
+    baseURL: 'http://localhost:3000/api/v1/',
     withCredentials: true
 });
 
@@ -14,32 +12,51 @@ api.interceptors.request.use((config) => {
 }, (error) => Promise.reject(error));
 
 
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
+import { AppStore } from '@/store';
+import { setCredentials, logout } from '@/store/features/auth/auth.slice';
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
 
-            try {
-                const { data } = await axios.post('http://localhost:4000/api/auth/refresh-token', {}, { withCredentials: true });
 
-                const currentUser = store.getState().auth.user;
-                if (currentUser) {
-                    const updatedUser = { ...currentUser, ...data };
-                    localStorage.setItem('user', JSON.stringify(updatedUser)); 
-                    store.dispatch(setCredentials({ user: updatedUser }));
+export const setupAxios = (store: AppStore) => {
+    api.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+            const originalRequest = error.config;
+
+            if (error.response?.status === 401 && !originalRequest._retry) {
+                originalRequest._retry = true;
+
+                try {
+                    const { data } = await axios.post('http://localhost:3000/api/v1/user/auth/refresh-token', {}, { withCredentials: true });
+
+                    // Update tokens in localStorage
+                    if (data.accessToken) {
+                        localStorage.setItem('token', data.accessToken);
+                    }
+                    if (data.refreshToken) {
+                        localStorage.setItem('refreshToken', data.refreshToken);
+                    }
+
+                    const currentUser = store.getState().auth.user;
+                    if (currentUser) {
+                        const updatedUser = { ...currentUser, accessToken: data.accessToken, refreshToken: data.refreshToken };
+                        localStorage.setItem('user', JSON.stringify(updatedUser));
+                        store.dispatch(setCredentials({
+                            user: updatedUser,
+                            accessToken: data.accessToken,
+                            refreshToken: data.refreshToken
+                        }));
+                    }
+
+                    return api(originalRequest);
+                } catch (refreshError) {
+                    console.log("Token-Refresh-Failed", refreshError);
+                    store.dispatch(logout());
                 }
-
-                return api(originalRequest);
-            } catch (refreshError) {
-                console.error("Token refresh failed", refreshError);
-                store.dispatch(logout());
             }
+            return Promise.reject(error);
         }
-        return Promise.reject(error);
-    }
-);
+    );
+};
 
 export default api;

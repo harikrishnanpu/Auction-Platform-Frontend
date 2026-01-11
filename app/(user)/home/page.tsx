@@ -2,9 +2,9 @@
 
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { DashboardView } from "@/components/dashboard/dashboard-view";
+import { RootState } from "@/store";
 
 export default function HomePage() {
     const { isAuthenticated } = useSelector((state: RootState) => state.auth);
