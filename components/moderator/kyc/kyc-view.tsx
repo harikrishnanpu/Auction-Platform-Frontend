@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { DashboardHeader } from "@/components/layout/navbars/navbar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { PersonalInfo } from "@/components/shared/kyc/personal-info";
 import { DocumentUpload } from "@/components/shared/kyc/document-upload";

@@ -2,8 +2,8 @@
 
 import { ThemeProvider } from 'next-themes';
 import React from 'react';
-import AuthInitializer from '@/features/auth/components/auth-initializer';
 import StoreProvider from './store-provider';
+import AuthInitializer from '@/features/auth/components/auth-initializer';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { DashboardHeader } from "@/components/layout/navbars/navbar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { PersonalInfo } from "@/components/shared/kyc/personal-info";
 import { DocumentUpload } from "@/components/shared/kyc/document-upload";
@@ -29,7 +29,7 @@ export function SellerKycView() {
             const data = await kycService.getStatus();
             setStatus(data.status || 'NOT_SUBMITTED');
         } catch (error) {
-            console.error("Failed to load KYC status", error);
+            console.log("Failed to load KYC status", error);
             setStatus('NOT_SUBMITTED');
         }
     };
@@ -42,7 +42,7 @@ export function SellerKycView() {
             setStatus('PENDING');
             window.scrollTo(0, 0); // Scroll to top to see status
         } catch (error: any) {
-            console.error("Submit error:", error);
+            console.log("Submit error:", error);
             toast.error(error.response?.data?.message || "Failed to submit KYC");
         } finally {
             setLoading(false);

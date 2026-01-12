@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
     CreditCard,
     Wallet,
@@ -20,21 +19,21 @@ import {
     Headphones,
     ArrowRight,
 } from "lucide-react";
-import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { DashboardHeader } from "@/components/layout/navbars/navbar";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { useRouter } from "next/navigation";
 
 export function DashboardView() {
     const { user } = useSelector((state: RootState) => state.auth);
+    const router = useRouter();
 
     return (
         <div className="min-h-screen font-sans transition-colors duration-300 bg-gradient-to-b from-blue-200 via-blue-50 to-amber-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-foreground">
             <DashboardHeader />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-20 mt-8 space-y-8 animate-in fade-in duration-500">
-                {/* Top Grid: Welcome & Wallet */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Welcome Card */}
                     <div className="lg:col-span-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/20 dark:border-white/5 rounded-3xl p-8 md:p-10 relative overflow-hidden flex flex-col justify-between min-h-[260px] shadow-sm">
                         <div className="z-10 relative">
                             <div className="flex items-center gap-2 mb-2">
@@ -63,8 +62,9 @@ export function DashboardView() {
                                     className="group-hover:translate-x-1 transition-transform"
                                 />
                             </button>
-                            <button className="bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 text-foreground px-6 py-3 rounded-xl text-sm font-medium border border-white/20 transition backdrop-blur-sm">
-                                View Analytics
+                            <button onClick={() => router.push('/seller/landing')} className="bg-white/50 flex dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 text-foreground px-6 py-3 rounded-xl text-sm font-medium border border-white/20 transition backdrop-blur-sm align-middle flex items-center gap-2 group shadow-sm cursor-pointer">
+                               Seller Hub
+                                <ArrowRight />
                             </button>
                         </div>
                         <div className="absolute -right-12 -top-12 w-64 h-64 bg-blue-300/30 rounded-full blur-3xl pointer-events-none mix-blend-multiply dark:mix-blend-overlay"></div>

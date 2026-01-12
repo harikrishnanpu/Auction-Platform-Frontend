@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './features/auth/auth.slice';
-import adminAuthReducer from './features/admin/admin-auth.slice';
-import adminReducer from './features/admin/admin.slice';
+import adminAuthReducer from './features/admin/auth/admin-auth.slice';
+import adminReducer from './features/admin/auth/admin.slice';
 
 
 export const makeStore = () => {

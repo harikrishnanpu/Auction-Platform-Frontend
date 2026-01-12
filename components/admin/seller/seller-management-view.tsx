@@ -4,7 +4,7 @@ import React from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
-import { getSellersThunk, blockSellerThunk } from "@/store/features/admin/admin.thunk";
+import { getSellersThunk, blockSellerThunk } from "@/store/features/admin/auth/admin.thunk";
 import { SellerTable } from "./seller-table";
 
 export function SellerManagementView() {
@@ -25,7 +25,7 @@ export function SellerManagementView() {
             await dispatch(blockSellerThunk({ id, block })).unwrap();
             dispatch(getSellersThunk({ page, limit: 10 }));
         } catch (error) {
-            console.error("Failed to block/unblock seller", error);
+            console.log("Failed to block/unblock seller", error);
         }
     };
 

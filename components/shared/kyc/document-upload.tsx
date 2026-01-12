@@ -103,7 +103,7 @@ export function DocumentUpload() {
                 if (addressProofInputRef.current) addressProofInputRef.current.value = '';
             }
         } catch (error: any) {
-            console.error('Upload error:', error);
+            console.log('Upload error:', error);
             alert(error.response?.data?.message || 'Failed to upload file. Please try again.');
             setUploadedFiles((prev) => [
                 ...prev.filter((f) => f.documentType !== documentType),

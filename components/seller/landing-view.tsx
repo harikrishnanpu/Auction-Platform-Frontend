@@ -41,7 +41,7 @@ export function SellerLandingView() {
                     router.push('/seller/kyc');
                 }
             } catch (error) {
-                console.error("Failed to check KYC status", error);
+                console.log("Failed to check KYC status", error);
             }
         };
         checkStatus();

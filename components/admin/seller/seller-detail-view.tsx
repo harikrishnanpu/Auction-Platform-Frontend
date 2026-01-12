@@ -4,7 +4,7 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Edit, Ban, CheckCircle, Clock, FileText } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
-import { getSellerByIdThunk, verifySellerKycThunk, blockSellerThunk, assignSellerRoleThunk } from "@/store/features/admin/admin.thunk";
+import { getSellerByIdThunk, verifySellerKycThunk, blockSellerThunk, assignSellerRoleThunk } from "@/store/features/admin/auth/admin.thunk";
 
 export function SellerDetailView() {
     const params = useParams();
@@ -27,7 +27,7 @@ export function SellerDetailView() {
             await dispatch(verifySellerKycThunk({ id: seller.id, verify })).unwrap();
             dispatch(getSellerByIdThunk(seller.id));
         } catch (error) {
-            console.error("Failed to verify KYC", error);
+            console.log("Failed to verify KYC", error);
         }
     };
 
@@ -37,7 +37,7 @@ export function SellerDetailView() {
             await dispatch(blockSellerThunk({ id: seller.id, block: !seller.is_blocked })).unwrap();
             dispatch(getSellerByIdThunk(seller.id));
         } catch (error) {
-            console.error("Failed to block/unblock seller", error);
+            console.log("Failed to block/unblock seller", error);
         }
     };
 
@@ -47,7 +47,7 @@ export function SellerDetailView() {
             await dispatch(assignSellerRoleThunk(seller.id)).unwrap();
             dispatch(getSellerByIdThunk(seller.id));
         } catch (error) {
-            console.error("Failed to assign seller role", error);
+            console.log("Failed to assign seller role", error);
         }
     };
 

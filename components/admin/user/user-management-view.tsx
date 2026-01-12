@@ -4,7 +4,7 @@ import React from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
-import { getUsersThunk, blockUserThunk } from "@/store/features/admin/admin.thunk";
+import { getUsersThunk, blockUserThunk } from "@/store/features/admin/auth/admin.thunk";
 import { UserStats } from "./user-stats";
 import { UserFilters } from "./user-filters";
 import { UserTable } from "./user-table";
@@ -28,7 +28,7 @@ export function UserManagementView() {
             // Refresh users list
             dispatch(getUsersThunk({ page, limit: 10 }));
         } catch (error) {
-            console.error("Failed to block/unblock user", error);
+            console.log("Failed to block/unblock user", error);
         }
     };
 

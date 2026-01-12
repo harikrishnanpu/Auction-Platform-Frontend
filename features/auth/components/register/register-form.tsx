@@ -215,7 +215,9 @@ export function RegisterForm() {
                 </div>
 
                 <div className="mt-6 grid grid-cols-1 gap-3">
-                    <SiginWithGoogleButton handleClick={() => { }} />
+                    <SiginWithGoogleButton handleClick={() => {
+                        window.location.href = 'http://localhost:4000/api/v1/user/auth/google';
+                    }} />
                 </div>
             </div>
 

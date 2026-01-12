@@ -1,83 +1,100 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/hooks';
-import { getCurrentUserThunk } from '@/store/features/auth/auth.thunk';
 import { usePathname, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/hooks';
+import { getCurrentUserThunk } from '@/store/features/auth/auth.thunk';
 
-const PUBLIC_ROUTES = ['/', '/login', '/register', '/email', '/recover/password', '/reset-password'];
+const PUBLIC_ROUTES = [
+  '/',
+  '/login',
+  '/register',
+  '/verify',
+  '/reset',
+  '/reset-password',
+];
 
-export default function AuthInitializer({ children }: { children: React.ReactNode }) {
-    const dispatch = useAppDispatch();
-    const { isAuthenticated, isLoading, user } = useAppSelector((state) => state.auth);
-    const router = useRouter();
-    const pathname = usePathname();
-    const [isInitialized, setIsInitialized] = useState(false);
+const ADMIN_PUBLIC_ROUTES = ['/admin/login'];
 
-    useEffect(() => {
-        const initAuth = async () => {
-            const token = localStorage.getItem('token');
-            if (token && !isAuthenticated) {
-                await dispatch(getCurrentUserThunk());
-            }
-            setIsInitialized(true);
-        };
+export default function AuthInitializer({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const pathname = usePathname();
 
-        if (!isInitialized) {
-            initAuth();
+  const { user, isAuthenticated, isLoading } = useAppSelector(
+    (state) => state.auth
+  );
+
+  const [initialized, setInitialized] = useState(false);
+
+  const isAdminRoute = pathname.startsWith('/admin');
+  const isAdmin = user?.role === 'admin';
+
+  useEffect(() => {
+    const init = async () => {
+      await dispatch(getCurrentUserThunk());
+      setInitialized(true);
+    };
+
+    if (!initialized) init();
+  }, [dispatch, initialized]);
+
+  useEffect(() => {
+    if (!initialized || isLoading) return;
+
+
+    if (isAdminRoute) {
+      if (!isAuthenticated) {
+        if (!ADMIN_PUBLIC_ROUTES.includes(pathname)) {
+          router.replace('/admin/login');
         }
-    }, [dispatch, isAuthenticated, isInitialized]);
+        return;
+      }
 
-    useEffect(() => {
-        if (!isInitialized) return;
+      if (isAuthenticated && isAdmin && pathname === '/admin/login') {
+        router.replace('/admin/dashboard');
+        return;
+      }
 
-        // If authenticated and on a public route, redirect to home
-        if (isAuthenticated && PUBLIC_ROUTES.includes(pathname)) {
-            router.push('/home');
-        }
+      if (isAuthenticated && !isAdmin) {
+        router.replace('/home');
+        return;
+      }
 
-        // If not authenticated and on a protected route (not public), redirect to login
-        // Note: We need to be careful with "not public" check. 
-        // Ideally we should list protected routes or just standard convention.
-        // For now, assuming everything NOT public is protected.
-        // Also need to allow some global public assets or unrelated routes if any.
-        // Given user request "restrict from landing, verify, login, register pages", 
-        // the main requirement is guarding these specific pages against logged in users.
-        // And guarding protected pages against logged out users.
-
-        // Skip auth check for admin routes (admin has separate auth)
-        if (pathname.startsWith('/admin')) {
-            return;
-        }
-
-        if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
-            // Check if it's a verify page with query params? No, strict check on pathname.
-            // But pathname doesn't include query params.
-            // /email is in PUBLIC_ROUTES, so it's allowed for unauthenticated.
-            // But valid use case: User registers -> /email (authenticated? No, usually temporary token or no token yet?
-            // Wait, verifyEmailThunk logs them in. BEFORE verification, they are NOT logged in.
-            // So /email must be public.
-
-            // router.push('/login');
-        }
-    }, [isInitialized, isAuthenticated, pathname, router]);
-
-    // Show loader if:
-    // 1. Not initialized yet
-    // 2. Loading state is true
-    // 3. Authenticated but on a public route (Redirecting...)
-    // 4. Checking token from localStorage
-    const isRedirecting = isAuthenticated && PUBLIC_ROUTES.includes(pathname);
-
-    if (!isInitialized || (isLoading && !isAuthenticated && localStorage.getItem('token')) || isRedirecting) {
-        // Show loader while initializing or valid token being checked
-        return (
-            <div className="h-screen w-full flex items-center justify-center bg-background">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-        );
+      return;
     }
 
-    return <>{children}</>;
+
+    if (isAuthenticated && PUBLIC_ROUTES.includes(pathname)) {
+      router.replace('/home');
+      return;
+    }
+
+    if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
+      router.replace('/login');
+      return;
+    }
+  }, [
+    initialized,
+    isLoading,
+    isAuthenticated,
+    isAdmin,
+    pathname,
+    router,
+  ]);
+
+  if (!initialized || isLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  return <>{children}</>;
 }

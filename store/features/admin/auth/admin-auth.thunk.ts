@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { LoginFormValues } from "@/features/auth/schemes/register-schema";
-import { authService } from "@/features/auth/services/auth.service";
 import { AdminLoginResponse } from "@/features/admin/auth/types";
+import { adminAuthServices } from "@/features/admin/auth/services/admin-auth-services";
 
 export const loginAdminThunk = createAsyncThunk<
     AdminLoginResponse,
@@ -9,9 +9,9 @@ export const loginAdminThunk = createAsyncThunk<
     { rejectValue: string }
 >(
     'admin/login',
-    async (credentials: LoginFormValues, { rejectWithValue }) => {
+    async (data: LoginFormValues, { rejectWithValue }) => {
         try {
-            const response = await authService.loginAdmin(credentials);
+            const response = await adminAuthServices.loginAdmin(data);
             return response;
         } catch (err: unknown) {
             return rejectWithValue((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Admin Login failed');

@@ -66,7 +66,7 @@ export function LivenessCheck() {
             toast.success("Liveness check passed!");
 
         } catch (error: any) {
-            console.error("Liveness upload error:", error);
+            console.log("Liveness upload error:", error);
             toast.error("Failed to upload liveness check");
         } finally {
             setIsUploading(false);

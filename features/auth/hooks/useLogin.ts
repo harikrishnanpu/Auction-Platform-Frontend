@@ -27,7 +27,7 @@ export const useLogin = () => {
             await dispatch(loginUserThunk(data)).unwrap();
             router.push('/home');
         } catch (err) {
-            console.error("Login Failed", err);
+            console.log("Login Failed", err);
             setError("root", {
                 type: "server",
                 message: typeof err === 'string' ? err : "Invalid email or password"
