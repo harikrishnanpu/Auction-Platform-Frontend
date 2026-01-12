@@ -6,7 +6,7 @@ import { getCurrentUserThunk } from '@/store/features/auth/auth.thunk';
 import { usePathname, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
-const PUBLIC_ROUTES = ['/', '/login', '/register', '/email'];
+const PUBLIC_ROUTES = ['/', '/login', '/register', '/email', '/recover/password', '/reset-password'];
 
 export default function AuthInitializer({ children }: { children: React.ReactNode }) {
     const dispatch = useAppDispatch();
