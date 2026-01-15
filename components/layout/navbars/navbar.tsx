@@ -1,13 +1,18 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import Link from "next/link";
-import { Search, Bell, Sun, Moon } from "lucide-react";
-import { Button } from "@/components/ui/buttons/button";
+import { Search, Bell } from "lucide-react";
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import { useAppDispatch } from "@/store/hooks/hooks";
+import { logoutThunk } from "@/store/features/auth/auth.thunk";
 
 export function DashboardHeader() {
-    const { theme, setTheme } = useTheme();
-    const isDark = theme === "dark";
+
+    const dispatch = useAppDispatch();
+
+    const handleLogout = () => {
+        dispatch(logoutThunk());
+    }
 
     return (
         <nav className="sticky top-0 z-50 backdrop-blur-md border-b border-border bg-background/80">
@@ -34,7 +39,7 @@ export function DashboardHeader() {
                                 Live Auctions
                             </Link>
                             <Link
-                                href="/seller/landing" // Assuming this is where Seller Hub might point initially, or maybe /seller/kyc for now
+                                href="/seller/landing"
                                 className="hover:text-foreground transition-colors"
                             >
                                 Seller Hub
@@ -55,17 +60,10 @@ export function DashboardHeader() {
                             <Bell size={20} />
                             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-background"></span>
                         </button>
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-primary transition">
+                        <div onClick={handleLogout} className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-primary transition">
                             HS
                         </div>
-                        <button
-                            className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground"
-                            onClick={() => setTheme(isDark ? "light" : "dark")}
-                        >
-                            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                            <span className="sr-only">Toggle theme</span>
-                        </button>
+                        <ModeToggle />
                     </div>
                 </div>
             </div>

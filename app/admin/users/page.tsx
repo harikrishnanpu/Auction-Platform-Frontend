@@ -1,5 +1,5 @@
 import React from "react";
-import { UserManagementView } from "@/components/admin/user/user-management-view";
+import { UserManagementView } from "@/features/admin/users/components/user-management-view";
 
 export default function UserManagementPage() {
     return <UserManagementView />;

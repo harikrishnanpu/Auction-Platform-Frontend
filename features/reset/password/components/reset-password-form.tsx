@@ -1,42 +1,18 @@
+
+
 "use client";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+
+
 import { Loader2, Lock, Mail, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
-import { authService } from "@/features/auth/services/auth.service";
-import { toast } from "sonner";
-import { forgotPasswordSchema, type ForgotPasswordValues } from "@/features/auth/schemes/register-schema";
+import { useResetPassword } from "../hooks/useResetPassword";
+import Link from "next/link";
 
 export function RecoverPasswordForm() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSent, setIsSent] = useState(false);
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<ForgotPasswordValues>({
-        resolver: zodResolver(forgotPasswordSchema),
-        defaultValues: { email: "" },
-    });
 
-    const onEmailSubmit = async (data: ForgotPasswordValues) => {
-        setIsLoading(true);
-        try {
-            const response = await authService.forgotPassword({ email: data.email });
-            if (response.success) {
-                toast.success("Reset link sent to your email!");
-                setIsSent(true);
-            } else {
-                toast.error("Failed to send reset link.");
-            }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Something went wrong");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const { register, handleSubmit, errors, isSubmitting, isSent, onSubmit  } = useResetPassword();
+
 
     if (isSent) {
         return (
@@ -53,7 +29,7 @@ export function RecoverPasswordForm() {
                     </p>
                 </div>
                 <div className="text-center">
-                    <a href="/login" className="text-primary hover:underline font-medium">Return to Login</a>
+                    <Link href="/login" className="text-primary hover:underline font-medium">Return to Login</Link>
                 </div>
             </div>
         );
@@ -61,7 +37,7 @@ export function RecoverPasswordForm() {
 
     return (
         <div className="w-full max-w-md bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-[2rem] shadow-2xl p-8 md:p-12 border border-white/20 dark:border-white/10 relative overflow-hidden animate-in fade-in slide-in-from-left-8 duration-500">
-            {/* Security Badge */}
+
             <div className="absolute top-6 right-6 text-xs font-serif italic text-muted-foreground opacity-70">
                 security check
             </div>
@@ -74,11 +50,11 @@ export function RecoverPasswordForm() {
                     Recover Password
                 </h1>
                 <p className="text-muted-foreground text-sm md:text-base leading-relaxed max-w-xs mx-auto">
-                    Don't worry, it happens. Enter your email and we'll send you a secure link to reset it.
+                    Enter your email and we'll send you a secure link to reset it.
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit(onEmailSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
                     <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 ml-1">
                         Email Address
@@ -103,10 +79,10 @@ export function RecoverPasswordForm() {
 
                 <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                     className="w-full h-14 text-base font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
                 >
-                    {isLoading ? (
+                    {isSubmitting ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
                     ) : (
                         <>

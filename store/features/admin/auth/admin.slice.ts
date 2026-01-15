@@ -9,7 +9,8 @@ import {
     getSellerByIdThunk,
     verifySellerKycThunk,
     blockSellerThunk,
-    assignSellerRoleThunk
+    assignSellerRoleThunk,
+    getAdminStatsThunk
 } from './admin.thunk';
 
 interface AdminState {
@@ -36,6 +37,16 @@ interface AdminState {
     };
     sellerDetail: {
         seller: any | null;
+        isLoading: boolean;
+        error: string | null;
+    };
+    stats: {
+        data: {
+            totalUsers: number;
+            pendingKyc: number;
+            activeSellers: number;
+            suspendedUsers: number;
+        } | null;
         isLoading: boolean;
         error: string | null;
     };
@@ -68,6 +79,11 @@ const initialState: AdminState = {
         isLoading: false,
         error: null,
     },
+    stats: {
+        data: null,
+        isLoading: false,
+        error: null,
+    },
 };
 
 const adminSlice = createSlice({
@@ -82,6 +98,20 @@ const adminSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        // Stats
+        builder
+            .addCase(getAdminStatsThunk.pending, (state) => {
+                state.stats.isLoading = true;
+                state.stats.error = null;
+            })
+            .addCase(getAdminStatsThunk.fulfilled, (state, action: PayloadAction<any>) => {
+                state.stats.isLoading = false;
+                state.stats.data = action.payload;
+            })
+            .addCase(getAdminStatsThunk.rejected, (state, action) => {
+                state.stats.isLoading = false;
+                state.stats.error = action.payload as string;
+            })
         // Users
         builder
             .addCase(getUsersThunk.pending, (state) => {
@@ -112,19 +142,6 @@ const adminSlice = createSlice({
                 state.userDetail.isLoading = false;
                 state.userDetail.error = action.payload as string;
             })
-            // Update User
-            .addCase(updateUserThunk.fulfilled, (state) => {
-                // Optionally refresh user list or update user detail
-            })
-            // Block User
-            .addCase(blockUserThunk.fulfilled, (state) => {
-                // Optionally update user in list
-            })
-            // Delete User
-            .addCase(deleteUserThunk.fulfilled, (state) => {
-                // Optionally remove user from list
-            })
-            // Sellers
             .addCase(getSellersThunk.pending, (state) => {
                 state.sellers.isLoading = true;
                 state.sellers.error = null;
@@ -140,7 +157,6 @@ const adminSlice = createSlice({
                 state.sellers.isLoading = false;
                 state.sellers.error = action.payload as string;
             })
-            // Seller Detail
             .addCase(getSellerByIdThunk.pending, (state) => {
                 state.sellerDetail.isLoading = true;
                 state.sellerDetail.error = null;
@@ -153,18 +169,6 @@ const adminSlice = createSlice({
                 state.sellerDetail.isLoading = false;
                 state.sellerDetail.error = action.payload as string;
             })
-            // Verify Seller KYC
-            .addCase(verifySellerKycThunk.fulfilled, (state) => {
-                // Optionally update seller in list
-            })
-            // Block Seller
-            .addCase(blockSellerThunk.fulfilled, (state) => {
-                // Optionally update seller in list
-            })
-            // Assign Seller Role
-            .addCase(assignSellerRoleThunk.fulfilled, (state) => {
-                // Optionally update seller in list
-            });
     },
 });
 

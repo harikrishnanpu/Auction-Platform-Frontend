@@ -24,7 +24,7 @@ export const useRegister = () => {
       phone: "",
       address: "",
       password: "",
-      terms: undefined,
+      terms: false,
     },
   });
 

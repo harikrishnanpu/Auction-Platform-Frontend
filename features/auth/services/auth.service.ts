@@ -15,11 +15,6 @@ export const authService = {
         return response.data;
     },
 
-    async loginAdmin(data: LoginFormValues) {
-        const response = await api.post<{ message: string, user: any }>(`/admin/auth/login`, data);
-        return { success: true, message: response.data.message, user: response.data.user };
-    },
-
     async getCurrentUser() {
         const response = await api.get<{ success: boolean, user: User }>(`/user/auth/me`);
         return response.data.user;
@@ -35,17 +30,8 @@ export const authService = {
         return response.data;
     },
 
-    async forgotPassword(data: { email: string }) {
-        const response = await api.post<{ success: boolean; message: string }>(`/user/auth/forgot-password`, data);
-        return response.data;
-    },
-
-    async resetPassword(data: { email: string; otp: string; newPassword: string }) {
-        const response = await api.post<{ success: boolean; message: string }>(`/user/auth/reset-password`, data);
-        return response.data;
-    },
-
     async logout() {
-
+        const response = await api.post<{ success: boolean, message: string }>(`/user/auth/logout`);
+        return response.data;
     }
 };

@@ -1,6 +1,7 @@
 import { Users, FileCheck, Store, Gavel } from "lucide-react";
 
-export function UserStats({ totalUsers }: { totalUsers: number }) {
+export function UserStats({ stats }: { stats: { totalUsers: number, pendingKyc: number, activeSellers: number, suspendedUsers: number } | null }) {
+    const data = stats || { totalUsers: 0, pendingKyc: 0, activeSellers: 0, suspendedUsers: 0 };
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-border flex items-center gap-4">
@@ -11,7 +12,7 @@ export function UserStats({ totalUsers }: { totalUsers: number }) {
                     <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
                         Total Users
                     </p>
-                    <p className="text-xl font-bold text-foreground">{totalUsers}</p>
+                    <p className="text-xl font-bold text-foreground">{data.totalUsers}</p>
                 </div>
             </div>
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-border flex items-center gap-4">
@@ -22,7 +23,7 @@ export function UserStats({ totalUsers }: { totalUsers: number }) {
                     <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
                         Pending KYC
                     </p>
-                    <p className="text-xl font-bold text-foreground">48</p>
+                    <p className="text-xl font-bold text-foreground">{data.pendingKyc}</p>
                 </div>
             </div>
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-border flex items-center gap-4">
@@ -33,7 +34,7 @@ export function UserStats({ totalUsers }: { totalUsers: number }) {
                     <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
                         Active Sellers
                     </p>
-                    <p className="text-xl font-bold text-foreground">892</p>
+                    <p className="text-xl font-bold text-foreground">{data.activeSellers}</p>
                 </div>
             </div>
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-border flex items-center gap-4">
@@ -44,7 +45,7 @@ export function UserStats({ totalUsers }: { totalUsers: number }) {
                     <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
                         Suspended
                     </p>
-                    <p className="text-xl font-bold text-foreground">15</p>
+                    <p className="text-xl font-bold text-foreground">{data.suspendedUsers}</p>
                 </div>
             </div>
         </div>

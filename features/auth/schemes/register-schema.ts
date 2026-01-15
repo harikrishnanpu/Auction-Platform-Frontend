@@ -9,7 +9,9 @@ export const registerSchema = z.object({
     address: z.string().min(5, "Address must be at least 5 characters"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     avatar_url: z.string().optional(),
-    terms: z.boolean().default(false).optional(),
+    terms: z.boolean().refine((val) => val === true, {
+        message: "You must agree to the terms and privacy policy",
+    }),
 });
 
 

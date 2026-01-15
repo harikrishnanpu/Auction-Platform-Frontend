@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/buttons/button";
 import { SiginWithGoogleButton } from "@/components/ui/buttons/google-signin";
 import { useRegister } from "../../hooks/useRegister";
+import { useSearchParams } from "next/navigation";
 
 export function RegisterForm() {
 
@@ -13,7 +14,11 @@ export function RegisterForm() {
 
     const { register, handleSubmit, errors, isSubmitting, onSubmit } = useRegister();
 
+    const params = useSearchParams();
 
+    const error = params.get('error');
+
+    console.log(error)
 
     return (
 
@@ -188,8 +193,8 @@ export function RegisterForm() {
             </div>
 
 
-            {errors.root && (
-                <div className="text-red-500 text-sm text-center bg-red-50 dark:bg-red-900/10 p-2 rounded">{errors.root.message}</div>
+            {(errors.root || error ) && (
+                <div className="text-red-500 text-sm text-center bg-red-50 dark:bg-red-900/10 p-2 rounded">{errors.root?.message || error}</div>
             )}
 
             <Button
@@ -215,7 +220,12 @@ export function RegisterForm() {
                 </div>
 
                 <div className="mt-6 grid grid-cols-1 gap-3">
-                    <SiginWithGoogleButton handleClick={() => { }} />
+
+                    <SiginWithGoogleButton handleClick={() => {
+                        const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+                        window.location.href = `${backendUrl}user/auth/google?callBack=register`;
+                    }} />
+
                 </div>
             </div>
 

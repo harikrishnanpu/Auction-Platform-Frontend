@@ -1,18 +1,16 @@
-'use client';
-
 import { ThemeProvider } from 'next-themes';
 import React from 'react';
-import AuthInitializer from '@/features/auth/components/auth-initializer';
 import StoreProvider from './store-provider';
+import AuthProvider from '@/features/auth/providers/auth-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <StoreProvider>
-            <AuthInitializer>
+            <AuthProvider>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                     {children}
                 </ThemeProvider>
-            </AuthInitializer>
+            </AuthProvider>
         </StoreProvider>
     );
 }

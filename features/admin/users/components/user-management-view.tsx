@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
-import { getUsersThunk, blockUserThunk } from "@/store/features/admin/admin.thunk";
+import { getUsersThunk, blockUserThunk, getAdminStatsThunk } from "@/store/features/admin/auth/admin.thunk";
 import { UserStats } from "./user-stats";
 import { UserFilters } from "./user-filters";
 import { UserTable } from "./user-table";
@@ -12,23 +12,25 @@ import { UserTable } from "./user-table";
 export function UserManagementView() {
     const dispatch = useAppDispatch();
     const [page, setPage] = React.useState(1);
-    
+
     const users = useAppSelector((state: any) => state.admin?.users?.users || []);
     const loading = useAppSelector((state: any) => state.admin?.users?.isLoading || false);
     const totalPages = useAppSelector((state: any) => state.admin?.users?.totalPages || 1);
     const totalUsers = useAppSelector((state: any) => state.admin?.users?.total || 0);
+    const stats = useAppSelector((state: any) => state.admin?.stats?.data || null);
 
-    React.useEffect(() => {
+    useEffect(() => {
         dispatch(getUsersThunk({ page, limit: 10 }));
+        dispatch(getAdminStatsThunk());
     }, [page, dispatch]);
 
     const handleBlockUser = async (id: string, block: boolean) => {
         try {
             await dispatch(blockUserThunk({ id, block })).unwrap();
-            // Refresh users list
             dispatch(getUsersThunk({ page, limit: 10 }));
+            dispatch(getAdminStatsThunk());
         } catch (error) {
-            console.error("Failed to block/unblock user", error);
+            console.log("Failed to block/unblock user", error);
         }
     };
 
@@ -59,7 +61,7 @@ export function UserManagementView() {
                 </div>
             </div>
 
-            <UserStats totalUsers={totalUsers} />
+            <UserStats stats={stats} />
             <UserFilters />
             <UserTable
                 users={users}
