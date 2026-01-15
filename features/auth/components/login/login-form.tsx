@@ -5,12 +5,16 @@ import Link from "next/link";
 import { useLogin } from "../../hooks/useLogin";
 import { useState } from "react";
 import { SiginWithGoogleButton } from "@/components/ui/buttons/google-signin";
+import { useSearchParams } from "next/navigation";
 
 
 const LoginForm = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const { register, handleSubmit, errors, onSubmit, isSubmitting } = useLogin();
+
+    const params = useSearchParams();
+    const error = params.get('error');
 
     return (
 
@@ -82,9 +86,10 @@ const LoginForm = () => {
                         )}
                     </div>
 
-                    {errors.root && (
-                        <div className="text-red-500 text-sm text-center bg-red-50 dark:bg-red-900/10 p-2 rounded">{errors.root.message}</div>
-                    )}
+
+            {(errors.root || error ) && (
+                <div className="text-red-500 text-sm text-center bg-red-50 dark:bg-red-900/10 p-2 rounded">{errors.root?.message || error}</div>
+            )}
 
                     {/* Submit Button */}
                     <button
@@ -117,10 +122,8 @@ const LoginForm = () => {
                 <div className="grid grid-cols-1 gap-4">
 
                     <SiginWithGoogleButton handleClick={() => {
-                        const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:2500/api/v1";
-                        // Redirect to backend endpoint which handles passport-google-oauth20
-                        // Backend will set cookies and redirect to client landing page
-                        window.location.href = `${backendUrl}user/auth/google`;
+                        const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+                        window.location.href = `${backendUrl}user/auth/google?callBack=login`;
                     }} />
                 </div>
 

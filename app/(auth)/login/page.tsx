@@ -1,11 +1,8 @@
 import AuthNavbar from "@/components/layout/navbars/AuthNavbar";
 import TestimonialCard from "@/components/marketing/TestimonialCard";
 import LoginForm from "@/features/auth/components/login/login-form";
-import { useTheme } from "next-themes";
 
 export default function LoginPage() {
-
-    // const { theme } = useTheme();
 
     return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">

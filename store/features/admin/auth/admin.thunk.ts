@@ -120,3 +120,15 @@ export const assignSellerRoleThunk = createAsyncThunk(
         }
     }
 );
+
+export const getAdminStatsThunk = createAsyncThunk(
+    'admin/getStats',
+    async (_, { rejectWithValue }) => {
+        try {
+            const data = await adminService.getStats();
+            return data;
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.message || 'Failed to fetch admin stats');
+        }
+    }
+);

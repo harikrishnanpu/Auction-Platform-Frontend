@@ -9,7 +9,8 @@ import {
     getSellerByIdThunk,
     verifySellerKycThunk,
     blockSellerThunk,
-    assignSellerRoleThunk
+    assignSellerRoleThunk,
+    getAdminStatsThunk
 } from './admin.thunk';
 
 interface AdminState {
@@ -36,6 +37,16 @@ interface AdminState {
     };
     sellerDetail: {
         seller: any | null;
+        isLoading: boolean;
+        error: string | null;
+    };
+    stats: {
+        data: {
+            totalUsers: number;
+            pendingKyc: number;
+            activeSellers: number;
+            suspendedUsers: number;
+        } | null;
         isLoading: boolean;
         error: string | null;
     };
@@ -68,6 +79,11 @@ const initialState: AdminState = {
         isLoading: false,
         error: null,
     },
+    stats: {
+        data: null,
+        isLoading: false,
+        error: null,
+    },
 };
 
 const adminSlice = createSlice({
@@ -82,6 +98,20 @@ const adminSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        // Stats
+        builder
+            .addCase(getAdminStatsThunk.pending, (state) => {
+                state.stats.isLoading = true;
+                state.stats.error = null;
+            })
+            .addCase(getAdminStatsThunk.fulfilled, (state, action: PayloadAction<any>) => {
+                state.stats.isLoading = false;
+                state.stats.data = action.payload;
+            })
+            .addCase(getAdminStatsThunk.rejected, (state, action) => {
+                state.stats.isLoading = false;
+                state.stats.error = action.payload as string;
+            })
         // Users
         builder
             .addCase(getUsersThunk.pending, (state) => {

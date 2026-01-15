@@ -26,26 +26,7 @@ import { useRouter } from "next/navigation";
 
 export function SellerLandingView() {
     const { theme, setTheme } = useTheme();
-    const router = useRouter();
     const isDark = theme === "dark";
-
-    useEffect(() => {
-        const checkStatus = async () => {
-            try {
-                const data = await kycService.getStatus();
-                if (data.status === 'PENDING' || data.status === 'REJECTED') {
-                    // Redirect to KYC page to see status
-                    router.push('/seller/kyc');
-                } else if (data.status === 'VERIFIED') {
-                    // Ideally redirect to seller dashboard if exists, or kyc status for now
-                    router.push('/seller/kyc');
-                }
-            } catch (error) {
-                console.log("Failed to check KYC status", error);
-            }
-        };
-        checkStatus();
-    }, [router]);
 
     return (
         <div className="min-h-screen font-sans transition-colors duration-300 bg-blue-50/50 dark:bg-slate-950 text-foreground flex flex-col">

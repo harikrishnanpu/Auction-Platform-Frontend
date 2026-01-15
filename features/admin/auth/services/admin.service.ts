@@ -6,6 +6,11 @@ export const adminService = {
         return response.data;
     },
 
+    async getStats() {
+        const response = await api.get('/admin/stats');
+        return response.data;
+    },
+
     async getUserById(id: string) {
         const response = await api.get(`/admin/users/${id}`);
         return response.data;
@@ -17,7 +22,7 @@ export const adminService = {
     },
 
     async blockUser(id: string, block: boolean) {
-        const response = await api.patch(`/admin/users/${id}/block`, { block });
+        const response = await api.post(`/admin/users/${id}/block`, { block });
         return response.data;
     },
 
@@ -37,12 +42,12 @@ export const adminService = {
     },
 
     async verifySellerKyc(id: string, verify: boolean) {
-        const response = await api.patch(`/admin/sellers/${id}/verify-kyc`, { verify });
+        const response = await api.post(`/admin/sellers/${id}/verify`, { verify });
         return response.data;
     },
 
     async blockSeller(id: string, block: boolean) {
-        const response = await api.patch(`/admin/sellers/${id}/block`, { block });
+        const response = await api.post(`/admin/users/${id}/block`, { block }); // Sellers are users
         return response.data;
     },
 
