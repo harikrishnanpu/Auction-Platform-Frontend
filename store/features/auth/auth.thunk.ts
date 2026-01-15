@@ -1,7 +1,6 @@
 import { LoginFormValues, RegisterFormValues } from "@/features/auth/schemes/register-schema";
 import { authService } from "@/features/auth/services/auth.service";
 import { RegisterResponse, User } from "@/features/auth/types";
-import { ResetPasswordValues } from "@/features/reset/password/schems/change-password.schema";
 import { resetServices } from "@/features/reset/password/services/reset.services";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -92,18 +91,36 @@ export const forgotPasswordThunk = createAsyncThunk<
 
 
 export const resetPasswordThunk = createAsyncThunk<
-    
+
     { success: boolean; message: string },
     { newPassword: string; token: string, email: string },
     { rejectValue: string }
 >(
     'auth/resetPassword',
-    async (data , { rejectWithValue }) => {
+    async (data, { rejectWithValue }) => {
         try {
             const response = await resetServices.resetPassword(data);
             return response;
         } catch (err: unknown) {
-            return rejectWithValue((err as { response?: { data?: { message?: string } } } ).response?.data?.message || 'Failed to reset password')
+            return rejectWithValue((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to reset password')
+        }
+    }
+);
+
+
+
+export const logoutThunk = createAsyncThunk<
+    { success: boolean; message: string },
+    void,
+    { rejectValue: string }
+>(
+    'auth/logout',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await authService.logout();
+            return response;
+        } catch (err: unknown) {
+            return rejectWithValue((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Failed to logout');
         }
     }
 );

@@ -112,19 +112,6 @@ const adminSlice = createSlice({
                 state.userDetail.isLoading = false;
                 state.userDetail.error = action.payload as string;
             })
-            // Update User
-            .addCase(updateUserThunk.fulfilled, (state) => {
-                // Optionally refresh user list or update user detail
-            })
-            // Block User
-            .addCase(blockUserThunk.fulfilled, (state) => {
-                // Optionally update user in list
-            })
-            // Delete User
-            .addCase(deleteUserThunk.fulfilled, (state) => {
-                // Optionally remove user from list
-            })
-            // Sellers
             .addCase(getSellersThunk.pending, (state) => {
                 state.sellers.isLoading = true;
                 state.sellers.error = null;
@@ -140,7 +127,6 @@ const adminSlice = createSlice({
                 state.sellers.isLoading = false;
                 state.sellers.error = action.payload as string;
             })
-            // Seller Detail
             .addCase(getSellerByIdThunk.pending, (state) => {
                 state.sellerDetail.isLoading = true;
                 state.sellerDetail.error = null;
@@ -153,18 +139,6 @@ const adminSlice = createSlice({
                 state.sellerDetail.isLoading = false;
                 state.sellerDetail.error = action.payload as string;
             })
-            // Verify Seller KYC
-            .addCase(verifySellerKycThunk.fulfilled, (state) => {
-                // Optionally update seller in list
-            })
-            // Block Seller
-            .addCase(blockSellerThunk.fulfilled, (state) => {
-                // Optionally update seller in list
-            })
-            // Assign Seller Role
-            .addCase(assignSellerRoleThunk.fulfilled, (state) => {
-                // Optionally update seller in list
-            });
     },
 });
 

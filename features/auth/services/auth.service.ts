@@ -29,4 +29,9 @@ export const authService = {
         const response = await api.post<{ message: string }>(`/user/auth/resend-otp`, data);
         return response.data;
     },
+
+    async logout() {
+        const response = await api.post<{ success: boolean, message: string }>(`/user/auth/logout`);
+        return response.data;
+    }
 };

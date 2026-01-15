@@ -4,21 +4,14 @@ import Link from "next/link";
 import { Search, Bell } from "lucide-react";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { useAppDispatch } from "@/store/hooks/hooks";
-import { logout } from "@/store/features/auth/auth.slice";
+import { logoutThunk } from "@/store/features/auth/auth.thunk";
 
 export function DashboardHeader() {
 
     const dispatch = useAppDispatch();
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.removeItem('refreshToken');
-
-        window.cookieStore.delete('refreshToken');
-        window.cookieStore.delete('accessToken');
-
-        dispatch(logout())
+        dispatch(logoutThunk());
     }
 
     return (

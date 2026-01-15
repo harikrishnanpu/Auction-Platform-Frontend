@@ -30,14 +30,6 @@ const adminAuthSlice = createSlice({
             state.admin = action.payload.admin;
             state.isAuthenticated = true;
 
-            if (action.payload.admin.accessToken) {
-                localStorage.setItem('adminToken', action.payload.admin.accessToken);
-            }
-
-            if (action.payload.admin.refreshToken) {
-                localStorage.setItem('adminRefreshToken', action.payload.admin.refreshToken);
-            }
-
         }).addCase(loginAdminThunk.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.payload as string;

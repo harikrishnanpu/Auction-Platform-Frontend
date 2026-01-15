@@ -4,6 +4,7 @@ import { loginSchema, type LoginFormValues } from "../schemes/register-schema";
 import { loginUserThunk } from "@/store/features/auth/auth.thunk";
 import { useAppDispatch } from "@/store/hooks/hooks";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const useLogin = () => {
     const dispatch = useAppDispatch();
@@ -23,15 +24,21 @@ export const useLogin = () => {
     });
 
     const onSubmit = async (data: LoginFormValues) => {
-        try {
-            await dispatch(loginUserThunk(data)).unwrap();
+        const result = await dispatch(loginUserThunk(data));
+
+        if (loginUserThunk.fulfilled.match(result)) {
+            toast.success("Login successful!");
             router.push('/home');
-        } catch (err) {
-            console.log("Login Failed", err);
+        } else {
+            const errorMessage = typeof result.payload === 'string'
+                ? result.payload
+                : "Invalid email or password";
+
             setError("root", {
                 type: "server",
-                message: typeof err === 'string' ? err : "Invalid email or password"
+                message: errorMessage
             });
+            toast.error(errorMessage);
         }
     };
 

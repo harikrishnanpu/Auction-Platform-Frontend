@@ -16,11 +16,9 @@ const LoginForm = () => {
 
         <>
 
-            {/* Main Content */}
 
             <div className="w-full max-w-md bg-[#F0F6FA]/80  backdrop-blur-xl border dark:bg-blue-500/10 rounded-[2rem] shadow-xl p-8 md:p-10 relative overflow-hidden fade-in dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
 
-                {/* Header */}
                 <div className="text-center mb-8">
                     <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
                         Welcome Back
@@ -31,7 +29,7 @@ const LoginForm = () => {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                    {/* Email Field */}
+
                     <div className="space-y-1.5">
                         <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 ml-1">Email</label>
                         <div className="relative group">
@@ -50,7 +48,7 @@ const LoginForm = () => {
                         )}
                     </div>
 
-                    {/* Password Field */}
+
                     <div className="space-y-1.5">
                         <div className="flex justify-between items-center ml-1">
                             <label className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Password</label>
@@ -119,7 +117,10 @@ const LoginForm = () => {
                 <div className="grid grid-cols-1 gap-4">
 
                     <SiginWithGoogleButton handleClick={() => {
-                        window.location.href = 'http://localhost:2500/api/v1/user/auth/google';
+                        const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:2500/api/v1";
+                        // Redirect to backend endpoint which handles passport-google-oauth20
+                        // Backend will set cookies and redirect to client landing page
+                        window.location.href = `${backendUrl}user/auth/google`;
                     }} />
                 </div>
 

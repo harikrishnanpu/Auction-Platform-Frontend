@@ -13,7 +13,6 @@ export interface User {
     phone: string;
     password: string;
     accessToken: string;
-    refreshToken: string;
     roles: userRole[];
 }
 

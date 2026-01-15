@@ -23,10 +23,21 @@ import { DashboardHeader } from "@/components/layout/navbars/navbar";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export function DashboardView() {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
     const router = useRouter();
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.push('/');
+        }
+    }, [isAuthenticated, router]);
+
+    if (!isAuthenticated) {
+        return null;
+    }
 
     return (
         <div className="min-h-screen font-sans transition-colors duration-300 bg-gradient-to-b from-blue-200 via-blue-50 to-amber-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-foreground">

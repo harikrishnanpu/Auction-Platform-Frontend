@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { AppStore } from '@/store';
-import {logout } from '@/store/features/auth/auth.slice';
+import { logout } from '@/store/features/auth/auth.slice';
 
 const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -11,29 +11,14 @@ const api = axios.create({
 
 export const setupAxios = (store: AppStore) => {
 
-    api.interceptors.request.use((config) => {
-
-    const isAdminRoute = config.url?.includes('admin');
-    
-    const token = isAdminRoute 
-        ? localStorage.getItem('adminToken')
-        : localStorage.getItem('token');
-    
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-    }, (error) => Promise.reject(error));
-    
     api.interceptors.response.use(
         (response) => response,
         async (error) => {
             const originalRequest = error.config;
 
-            if ( error.response?.status === 401 && !originalRequest._retry &&
+            if (error.response?.status === 401 && !originalRequest._retry &&
                 !originalRequest.url.includes('refresh-token')
-                )
- {
+            ) {
                 originalRequest._retry = true;
 
                 try {
@@ -46,8 +31,8 @@ export const setupAxios = (store: AppStore) => {
                     store.dispatch(logout());
                 }
             }
-            return Promise.reject(error); 
-        }, 
+            return Promise.reject(error);
+        },
     );
 };
 
