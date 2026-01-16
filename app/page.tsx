@@ -11,17 +11,18 @@ import { CTASection } from '@/features/landing/components/CTASection';
 import { WhyUsSection } from '@/features/landing/components/WhyUsSection';
 import { LandingFooter } from '@/components/layout/footers/landingFooter';
 import { RootState } from '@/store';
+import { userRole } from '@/features/auth/types';
 
 export default function LandingPage() {
 
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user?.roles.includes(userRole.USER) ) {
       router.push('/home');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, user?.roles]);
 
   if (isAuthenticated) {
     return null;

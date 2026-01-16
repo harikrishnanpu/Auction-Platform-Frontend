@@ -4,13 +4,13 @@ import React from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
-import { getSellersThunk, blockSellerThunk } from "@/store/features/admin/auth/admin.thunk";
 import { SellerTable } from "./seller-table";
+import { blockSellerThunk, getSellersThunk } from "@/store/features/admin/management/admin-management.thunk";
 
 export function SellerManagementView() {
     const dispatch = useAppDispatch();
     const [page, setPage] = React.useState(1);
-    
+
     const sellers = useAppSelector((state: any) => state.admin?.sellers?.sellers || []);
     const loading = useAppSelector((state: any) => state.admin?.sellers?.isLoading || false);
     const totalPages = useAppSelector((state: any) => state.admin?.sellers?.totalPages || 1);

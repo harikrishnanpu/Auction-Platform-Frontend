@@ -7,16 +7,17 @@ import { useEffect } from "react";
 import TestimonialCard from "@/components/marketing/TestimonialCard";
 import AuthNavbar from "@/components/layout/navbars/AuthNavbar";
 import { useAppSelector } from "@/store/hooks/hooks";
+import { userRole } from "@/features/auth/types";
 
 export default function RegisterPage() {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user?.roles.includes(userRole.USER)) {
       router.push("/home");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, user?.roles]);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">

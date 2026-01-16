@@ -1,11 +1,11 @@
+import { adminService } from "@/features/admin/services/admin.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { adminService } from "@/features/admin/auth/services/admin.service";
 
 export const getUsersThunk = createAsyncThunk(
     'admin/getUsers',
-    async ({ page = 1, limit = 10 }: { page?: number; limit?: number }, { rejectWithValue }) => {
+    async ({ page = 1, limit = 10, search, sortBy, sortOrder }: { page?: number; limit?: number; search?: string; sortBy?: string; sortOrder?: 'asc' | 'desc' }, { rejectWithValue }) => {
         try {
-            const data = await adminService.getUsers(page, limit);
+            const data = await adminService.getUsers(page, limit, search, sortBy, sortOrder);
             return data;
         } catch (err: any) {
             return rejectWithValue(err.response?.data?.message || 'Failed to fetch users');

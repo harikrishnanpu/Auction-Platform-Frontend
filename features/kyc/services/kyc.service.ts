@@ -2,7 +2,7 @@ import api from "@/lib/axios";
 import axios from "axios";
 
 export const kycService = {
-    async generateUploadUrl(data: { documentType: string; fileName: string; contentType: string }) {
+    async generateUploadUrl(data: { documentType: string; fileName: string; contentType: string; kycType?: string }) {
         const response = await api.post<{ uploadUrl: string; fileKey: string }>(`/kyc/upload-url`, data);
         return response.data;
     },
@@ -18,7 +18,14 @@ export const kycService = {
         });
     },
 
-    async completeUpload(data: { documentType: string; fileKey: string; documentTypeName?: string; documentNumber?: string; address?: string }) {
+    async completeUpload(data: {
+        documentType: string;
+        fileKey: string;
+        documentTypeName?: string;
+        documentNumber?: string;
+        address?: string;
+        kycType?: string;
+    }) {
         const response = await api.post<{ message: string }>(`/kyc/complete-upload`, data);
         return response.data;
     },

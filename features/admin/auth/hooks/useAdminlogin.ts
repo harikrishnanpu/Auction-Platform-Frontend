@@ -6,7 +6,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginAdminThunk } from "@/store/features/admin/auth/admin-auth.thunk";
+import { loginUserThunk } from "@/store/features/auth/auth.thunk";
 
 export const useAdminLogin = () => {
   const dispatch = useAppDispatch();
@@ -26,7 +26,7 @@ export const useAdminLogin = () => {
 
   const onSubmit = async (data: AdminLoginFormValues) => {
     try {
-      await dispatch(loginAdminThunk(data)).unwrap();
+      await dispatch(loginUserThunk(data)).unwrap();
       router.push("/admin/");
     } catch (error: unknown) {
       console.log(error);

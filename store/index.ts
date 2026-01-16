@@ -1,7 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './features/auth/auth.slice';
-import adminAuthReducer from './features/admin/auth/admin-auth.slice';
-import adminReducer from './features/admin/auth/admin.slice';
+import adminReducer from './features/admin/management/admin-management.slice';
 
 
 export const makeStore = () => {
@@ -9,7 +8,6 @@ export const makeStore = () => {
     return configureStore({
         reducer: {
             auth: authReducer,
-            adminAuth: adminAuthReducer,
             admin: adminReducer,
         },
     });

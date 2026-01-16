@@ -68,6 +68,7 @@ export function DocumentUpload() {
                 documentType,
                 fileName: file.name,
                 contentType: file.type,
+                kycType: 'SELLER'
             });
 
             // Step 2: Upload file directly to S3
@@ -77,6 +78,7 @@ export function DocumentUpload() {
             await kycService.completeUpload({
                 documentType,
                 fileKey,
+                kycType: 'SELLER'
             });
 
             // Update state
@@ -167,13 +169,12 @@ export function DocumentUpload() {
                             />
                             <div
                                 onClick={() => !uploading && idFrontInputRef.current?.click()}
-                                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
-                                    uploading === 'id_front'
+                                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${uploading === 'id_front'
                                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-wait'
                                         : idFrontFile || getUploadedFile('id_front')
-                                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                        : 'border-border hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-muted/50'
-                                }`}
+                                            ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                                            : 'border-border hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-muted/50'
+                                    }`}
                             >
                                 {uploading === 'id_front' ? (
                                     <>
@@ -239,13 +240,12 @@ export function DocumentUpload() {
                             />
                             <div
                                 onClick={() => !uploading && idBackInputRef.current?.click()}
-                                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
-                                    uploading === 'id_back'
+                                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${uploading === 'id_back'
                                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-wait'
                                         : idBackFile || getUploadedFile('id_back')
-                                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                        : 'border-border hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-muted/50'
-                                }`}
+                                            ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                                            : 'border-border hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-muted/50'
+                                    }`}
                             >
                                 {uploading === 'id_back' ? (
                                     <>
@@ -316,13 +316,12 @@ export function DocumentUpload() {
                     />
                     <div
                         onClick={() => !uploading && addressProofInputRef.current?.click()}
-                        className={`border-2 border-dashed rounded-xl p-4 cursor-pointer transition-all ${
-                            uploading === 'address_proof'
+                        className={`border-2 border-dashed rounded-xl p-4 cursor-pointer transition-all ${uploading === 'address_proof'
                                 ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-wait'
                                 : addressProofFile || getUploadedFile('address_proof')
-                                ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                : 'border-border hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-muted/50'
-                        }`}
+                                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                                    : 'border-border hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-muted/50'
+                            }`}
                     >
                         {uploading === 'address_proof' ? (
                             <div className="flex items-center gap-4">

@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
     CheckCircle,
     Clock,
@@ -7,6 +8,8 @@ import {
     Edit,
     ChevronLeft,
     ChevronRight,
+    X,
+    ShieldAlert
 } from "lucide-react";
 import Link from 'next/link';
 
@@ -31,12 +34,21 @@ interface UserTableProps {
 }
 
 export function UserTable({ users, loading, page, totalPages, onPageChange, totalUsers, onBlockUser }: UserTableProps) {
+    const [confirmBlock, setConfirmBlock] = useState<{ id: string, name: string, block: boolean } | null>(null);
+
     if (loading) {
         return <div className="text-center py-10 dark:text-gray-300">Loading users...</div>;
     }
 
+    const handleBlockConfirm = () => {
+        if (confirmBlock && onBlockUser) {
+            onBlockUser(confirmBlock.id, confirmBlock.block);
+            setConfirmBlock(null);
+        }
+    };
+
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden relative">
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
@@ -111,7 +123,7 @@ export function UserTable({ users, loading, page, totalPages, onPageChange, tota
                                         </Link>
                                         {onBlockUser && (
                                             <button
-                                                onClick={() => onBlockUser(user.id, !user.is_blocked)}
+                                                onClick={() => setConfirmBlock({ id: user.id, name: user.name, block: !user.is_blocked })}
                                                 className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                                                 title={user.is_blocked ? "Unblock" : "Block"}
                                             >
@@ -157,6 +169,44 @@ export function UserTable({ users, loading, page, totalPages, onPageChange, tota
                     </button>
                 </div>
             </div>
+
+            {/* Confirmation Modal */}
+            {confirmBlock && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 max-w-md w-full mx-4 p-6 animate-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
+                                <ShieldAlert size={24} />
+                            </div>
+                            <button onClick={() => setConfirmBlock(null)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                            {confirmBlock.block ? 'Block User?' : 'Unblock User?'}
+                        </h3>
+                        <p className="text-gray-500 dark:text-gray-400 mb-6">
+                            Are you sure you want to {confirmBlock.block ? 'block' : 'unblock'}{" "}
+                            <span className="font-bold text-gray-900 dark:text-white">{confirmBlock.name}</span>?
+                            {confirmBlock.block && " They will no longer be able to access the platform."}
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setConfirmBlock(null)}
+                                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleBlockConfirm}
+                                className={`flex-1 px-4 py-2.5 rounded-xl text-white font-medium transition-colors shadow-lg shadow-red-500/20 ${confirmBlock.block ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'}`}
+                            >
+                                {confirmBlock.block ? 'Confirm Block' : 'Confirm Unblock'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

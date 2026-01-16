@@ -23,8 +23,8 @@ export function SellerStatusGuard({ children }: SellerStatusGuardProps) {
                 // If they have already submitted, they should probably see the status
                 // instead of the landing page which prompts for submission
                 if (data.status === 'PENDING' || data.status === 'VERIFIED' || data.status === 'REJECTED') {
-                    // Redirect to the KYC page which already handles showing the status
-                    router.push('/seller/kyc');
+                    // We let the landing page or the specific view handle the display
+                    // No redirect here to allow SellerLandingView to show the status
                 }
             } catch (error) {
                 console.error("Failed to fetch KYC status in guard:", error);
