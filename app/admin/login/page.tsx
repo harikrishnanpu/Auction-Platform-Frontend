@@ -11,10 +11,15 @@ const AdminLoginPage = () => {
     const { isAuthenticated, user } = useAuth();
 
     useEffect(() => {
-        if (isAuthenticated && user?.roles.includes(userRole.ADMIN)) {
-            window.location.href = '/admin';
+        if (isAuthenticated) {
+            if (user?.roles.includes(userRole.ADMIN)) {
+                // If Admin, go to dashboard
+                window.location.href = '/admin';
+            }
+            // If logged in but NOT admin, we DO NOTHING. 
+            // They are allowed to access this page to potentially login as admin.
         }
-    },[isAuthenticated, user])
+    }, [isAuthenticated, user])
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">

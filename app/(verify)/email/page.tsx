@@ -1,7 +1,23 @@
+'use client';
+
 import AuthNavbar from "@/components/layout/navbars/AuthNavbar";
+import { userRole } from "@/features/auth/types";
 import { VerifyEmailForm } from "@/features/verify/email/components/verify-email-form";
+import { useAppSelector } from "@/store/hooks/hooks";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function VerifyEmailPage() {
+
+    const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (isAuthenticated && user?.roles.includes(userRole.USER)) {
+            router.push('/home');
+        }
+    }, [isAuthenticated, user, router]);
+
     return (
         <div className={`min-h-screen flex flex-col font-sans transition-colors duration-500 bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800`}>
 

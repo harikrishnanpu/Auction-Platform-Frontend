@@ -20,13 +20,12 @@ import {
     ArrowRight,
 } from "lucide-react";
 import { DashboardHeader } from "@/components/layout/navbars/navbar";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export function DashboardView() {
-    const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const { user, isAuthenticated } = useAuth();
     const router = useRouter();
 
     useEffect(() => {

@@ -1,11 +1,25 @@
+'use client';
+
 import AuthNavbar from "@/components/layout/navbars/AuthNavbar";
 import TestimonialCard from "@/components/marketing/TestimonialCard";
 import LoginForm from "@/features/auth/components/login/login-form";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { userRole } from "@/features/auth/types";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LoginPage() {
+    const { isAuthenticated, user } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (isAuthenticated && user?.roles.includes(userRole.USER)) {
+            router.push('/home');
+        }
+    }, [isAuthenticated, user, router]);
 
     return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">
+        <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">
 
 
             <AuthNavbar />

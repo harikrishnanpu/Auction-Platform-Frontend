@@ -5,11 +5,16 @@ import { kycService } from "@/features/kyc/services/kyc.service";
 import { Button } from "@/components/ui/buttons/button";
 import { toast } from "sonner";
 
-export function LivenessCheck() {
+interface LivenessCheckProps {
+    isCompleted: boolean;
+    onComplete: (status: boolean) => void;
+}
+
+export function LivenessCheck({ isCompleted, onComplete }: LivenessCheckProps) {
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
-    const [isCompleted, setIsCompleted] = useState(false);
+    // Remove local state: const [isCompleted, setIsCompleted] = useState(false);
     const webcamRef = useRef<Webcam>(null);
 
     const videoConstraints = {
@@ -37,36 +42,35 @@ export function LivenessCheck() {
         try {
             setIsUploading(true);
 
-            // Convert base64 to blob
             const response = await fetch(capturedImage);
             const blob = await response.blob();
             const file = new File([blob], "liveness_check.jpg", { type: "image/jpeg" });
 
-            // 1. Get Upload URL
-            // using 'id_front' as a placeholder if checking backend support, 
-            // but ideally request 'liveness_check' if supported. 
-            // For now, let's use 'address_proof' or similar if backend fails, 
-            // but honestly I should just send 'liveness_check' and let backend handle (or ignore specific field update).
             const { uploadUrl, fileKey } = await kycService.generateUploadUrl({
                 documentType: 'liveness_check',
                 fileName: file.name,
                 contentType: file.type,
             });
 
-            // 2. Upload to S3
-            await kycService.uploadFileToS3(file, uploadUrl);
+            const res = await kycService.uploadFileToS3(file, uploadUrl);
 
-            // 3. Complete Upload
+            console.log("File uploaded!!!", res);
+
+
             await kycService.completeUpload({
-                documentType: 'liveness_check', // Backend might need this mapping or it will just ignore the DB update but verify file presence
+                documentType: 'liveness_check',
                 fileKey: fileKey
             });
 
-            setIsCompleted(true);
+            onComplete(true);
             toast.success("Liveness check passed!");
 
         } catch (error: any) {
+
+
             console.log("Liveness upload error:", error);
+
+
             toast.error("Failed to upload liveness check");
         } finally {
             setIsUploading(false);

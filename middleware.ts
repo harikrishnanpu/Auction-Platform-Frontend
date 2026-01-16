@@ -4,7 +4,7 @@ import { jwtVerify } from 'jose';
 import { userRole } from './features/auth/types';
 
 const ADMIN_ROUTES = ['/admin'];
-const AUTH_ROUTES = ['/login', '/register', '/admin/login', '/forgot-password'];
+const AUTH_ROUTES = ['/login', '/register', '/admin/login', '/forgot-password', '/email'];
 const PROTECTED_ROUTES = [
   '/dashboard',
   '/profile',
@@ -24,6 +24,8 @@ export async function middleware(request: NextRequest) {
   }
 
   const token = request.cookies.get('accessToken')?.value;
+
+
 
   let userPayload = null;
   if (token) {
@@ -65,7 +67,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin', request.url));
     }
     if (!isAdminLogin) {
-      return NextResponse.redirect(new URL('/home', request.url));
+      if (isUser) {
+        return NextResponse.redirect(new URL('/home', request.url));
+      }
     }
   }
 

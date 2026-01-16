@@ -8,9 +8,6 @@ export const kycService = {
     },
 
     async uploadFileToS3(file: File, uploadUrl: string) {
-        // Upload directly to S3 using the pre-signed URL
-        // Note: Do not use the main 'api' instance because it adds Authorization headers which S3 might reject
-        // or formatting that S3 doesn't like. Use plain axios.
         await axios.put(uploadUrl, file, {
             headers: {
                 'Content-Type': file.type

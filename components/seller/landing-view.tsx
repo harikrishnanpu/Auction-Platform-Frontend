@@ -29,6 +29,7 @@ export function SellerLandingView() {
     const { theme, setTheme } = useTheme();
     const isDark = theme === "dark";
     const [status, setStatus] = useState<string>('NOT_SUBMITTED');
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
     useEffect(() => {
         const fetchStatus = async () => {
@@ -178,6 +179,8 @@ export function SellerLandingView() {
                                     <input
                                         className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-input bg-background checked:bg-foreground checked:border-foreground transition-all"
                                         type="checkbox"
+                                        checked={acceptedTerms}
+                                        onChange={(e) => setAcceptedTerms(e.target.checked)}
                                     />
                                     <span className="absolute text-background opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                                         <Check size={14} strokeWidth={3} />
@@ -254,11 +257,17 @@ export function SellerLandingView() {
                                         <Clock size={18} /> Review in Progress
                                     </div>
                                 ) : status === 'REJECTED' ? (
-                                    <Link href="/seller/kyc" className="w-full bg-red-600 hover:bg-red-700 text-white py-3.5 px-6 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center gap-2 group">
+                                    <Link
+                                        href={acceptedTerms ? "/seller/kyc" : "#"}
+                                        className={`w-full bg-red-600 hover:bg-red-700 text-white py-3.5 px-6 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center gap-2 group ${!acceptedTerms && 'opacity-50 cursor-not-allowed pointer-events-none'}`}
+                                    >
                                         Re-submit Application <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                                     </Link>
                                 ) : (
-                                    <Link href="/seller/kyc" className="w-full bg-foreground hover:bg-foreground/90 text-background py-3.5 px-6 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center gap-2 group">
+                                    <Link
+                                        href={acceptedTerms ? "/seller/kyc" : "#"}
+                                        className={`w-full bg-foreground hover:bg-foreground/90 text-background py-3.5 px-6 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center gap-2 group ${!acceptedTerms && 'opacity-50 cursor-not-allowed pointer-events-none'}`}
+                                    >
                                         Submit Application{" "}
                                         <ArrowRight
                                             size={16}

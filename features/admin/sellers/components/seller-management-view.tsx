@@ -30,7 +30,7 @@ export function SellerManagementView() {
     };
 
     return (
-        <div className="font-sans transition-colors duration-300 bg-background text-foreground animate-in fade-in duration-500">
+        <div className="font-sans mt-5 px-2 container align-middle justify-center mx-auto min-h-screen transition-colors duration-300 bg-transparent text-foreground animate-in fade-in duration-500">
             <div className="mb-8">
                 <div className="flex items-center text-sm text-muted-foreground mb-2">
                     <Link href="/admin" className="hover:text-foreground flex items-center gap-1">

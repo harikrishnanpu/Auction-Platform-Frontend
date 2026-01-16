@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import LandingNavbar from '@/components/layout/navbars/LandingNavbar';
 import { HeroSection } from '@/features/landing/components/HeroSection';
@@ -10,21 +9,21 @@ import { FeaturesSection } from '@/features/landing/components/FeaturesSection';
 import { CTASection } from '@/features/landing/components/CTASection';
 import { WhyUsSection } from '@/features/landing/components/WhyUsSection';
 import { LandingFooter } from '@/components/layout/footers/landingFooter';
-import { RootState } from '@/store';
 import { userRole } from '@/features/auth/types';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export default function LandingPage() {
 
-  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated && user?.roles.includes(userRole.USER) ) {
+    if (isAuthenticated && user?.roles.includes(userRole.USER)) {
       router.push('/home');
     }
   }, [isAuthenticated, router, user?.roles]);
 
-  if (isAuthenticated) {
+  if (isAuthenticated && user?.roles.includes(userRole.USER)) {
     return null;
   }
 
