@@ -15,9 +15,14 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { kycSubmissionSchema } from "@/features/kyc/schemas/kyc.schema";
+import { UploadedFile } from "@/components/shared/kyc/document-upload";
+
 export function SellerKycView() {
     const [status, setStatus] = useState<string>('loading');
     const [loading, setLoading] = useState(false);
+    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+    const [livenessCompleted, setLivenessCompleted] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -28,14 +33,61 @@ export function SellerKycView() {
         try {
             const data = await kycService.getStatus();
             setStatus(data.status || 'NOT_SUBMITTED');
+
+            // If there's an existing profile, we might want to populate uploadedFiles
+            if (data.profile) {
+                const files: UploadedFile[] = [];
+                if (data.profile.id_front_url) {
+                    files.push({ documentType: 'id_front', fileKey: data.profile.id_front_url, fileName: 'ID Front', fileSize: 0, status: 'success' });
+                }
+                if (data.profile.id_back_url) {
+                    files.push({ documentType: 'id_back', fileKey: data.profile.id_back_url, fileName: 'ID Back', fileSize: 0, status: 'success' });
+                }
+                if (data.profile.address_proof_url) {
+                    files.push({ documentType: 'address_proof', fileKey: data.profile.address_proof_url, fileName: 'Address Proof', fileSize: 0, status: 'success' });
+                }
+                setUploadedFiles(files);
+
+                // Assuming if they have documents, liveness might have been done too,
+                // but usually, liveness is a separate flag. Check if profile has it.
+                if (data.profile.verification_status === 'PENDING' || data.profile.verification_status === 'VERIFIED') {
+                    setLivenessCompleted(true);
+                }
+            }
         } catch (error) {
             console.log("Failed to load KYC status", error);
             setStatus('NOT_SUBMITTED');
         }
     };
 
+    const handleUploadSuccess = (file: UploadedFile) => {
+        setUploadedFiles(prev => [
+            ...prev.filter(f => f.documentType !== file.documentType),
+            file
+        ]);
+    };
+
     const handleSubmit = async () => {
         try {
+            // Validate using Zod
+            const validationData = {
+                idFront: uploadedFiles.find(f => f.documentType === 'id_front' && f.status === 'success')?.fileKey || "",
+                idBack: uploadedFiles.find(f => f.documentType === 'id_back' && f.status === 'success')?.fileKey || "",
+                addressProof: uploadedFiles.find(f => f.documentType === 'address_proof' && f.status === 'success')?.fileKey || "",
+                livenessCheck: livenessCompleted,
+            };
+
+            const parseResult = kycSubmissionSchema.safeParse(validationData);
+
+            if (!parseResult.success) {
+                const errors = parseResult.error.flatten().fieldErrors;
+                if (errors.idFront) toast.error(errors.idFront[0]);
+                else if (errors.idBack) toast.error(errors.idBack[0]);
+                else if (errors.addressProof) toast.error(errors.addressProof[0]);
+                else if (errors.livenessCheck) toast.error(errors.livenessCheck[0]);
+                return;
+            }
+
             setLoading(true);
             await kycService.submitKyc();
             toast.success("KYC submitted for approval successfully!");
@@ -109,13 +161,19 @@ export function SellerKycView() {
                     {/* Main Form Area (Left) */}
                     <div className="lg:col-span-8 space-y-6">
                         <PersonalInfo />
-                        <DocumentUpload />
-                        <LivenessCheck />
+                        <DocumentUpload
+                            uploadedFiles={uploadedFiles}
+                            onUploadSuccess={handleUploadSuccess}
+                        />
+                        <LivenessCheck
+                            isCompleted={livenessCompleted}
+                            onComplete={setLivenessCompleted}
+                        />
                     </div>
 
                     {/* Sidebar Status (Right) */}
                     <div className="lg:col-span-4 space-y-6">
-                        <KycStatus />
+                        <KycStatus status={status} />
                     </div>
                 </div>
 

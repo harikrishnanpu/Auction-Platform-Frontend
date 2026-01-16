@@ -4,13 +4,13 @@ import React from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
-import { getSellersThunk, blockSellerThunk } from "@/store/features/admin/auth/admin.thunk";
 import { SellerTable } from "./seller-table";
+import { blockSellerThunk, getSellersThunk } from "@/store/features/admin/management/admin-management.thunk";
 
 export function SellerManagementView() {
     const dispatch = useAppDispatch();
     const [page, setPage] = React.useState(1);
-    
+
     const sellers = useAppSelector((state: any) => state.admin?.sellers?.sellers || []);
     const loading = useAppSelector((state: any) => state.admin?.sellers?.isLoading || false);
     const totalPages = useAppSelector((state: any) => state.admin?.sellers?.totalPages || 1);
@@ -30,7 +30,7 @@ export function SellerManagementView() {
     };
 
     return (
-        <div className="font-sans transition-colors duration-300 bg-background text-foreground animate-in fade-in duration-500">
+        <div className="font-sans mt-5 px-2 container align-middle justify-center mx-auto min-h-screen transition-colors duration-300 bg-transparent text-foreground animate-in fade-in duration-500">
             <div className="mb-8">
                 <div className="flex items-center text-sm text-muted-foreground mb-2">
                     <Link href="/admin" className="hover:text-foreground flex items-center gap-1">

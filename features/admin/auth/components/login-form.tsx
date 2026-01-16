@@ -2,6 +2,7 @@
 
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAdminLogin } from "../hooks/useAdminlogin";
 
 
@@ -9,6 +10,8 @@ export const AdminLoginForm = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const { register, handleSubmit, errors, onSubmit, isSubmitting } = useAdminLogin();
+    const params = useSearchParams();
+    const error = params.get('error');
 
     return (
 
@@ -26,7 +29,7 @@ export const AdminLoginForm = () => {
                     </p>
                 </div>
 
-                
+
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                     <div className="space-y-1.5">
@@ -71,8 +74,10 @@ export const AdminLoginForm = () => {
                         )}
                     </div>
 
-                    {errors.root && (
-                        <div className="text-red-500 text-sm text-center bg-red-50 dark:bg-red-900/10 p-2 rounded">{errors.root.message}</div>
+                    {(errors.root || error) && (
+                        <div className="text-red-500 text-sm text-center bg-red-100 dark:bg-red-500/10 border border-red-200 dark:border-red-500/50 p-3 rounded-xl mb-4 font-medium animate-in fade-in slide-in-from-top-2">
+                            {errors.root?.message || error}
+                        </div>
                     )}
 
 

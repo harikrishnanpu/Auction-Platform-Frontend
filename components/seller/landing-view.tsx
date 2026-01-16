@@ -17,6 +17,7 @@ import {
     DollarSign,
     Package,
     FileText,
+    Clock,
 } from "lucide-react";
 import { SiteFooter } from "@/components/layout/site-footer";
 
@@ -27,6 +28,20 @@ import { useRouter } from "next/navigation";
 export function SellerLandingView() {
     const { theme, setTheme } = useTheme();
     const isDark = theme === "dark";
+    const [status, setStatus] = useState<string>('NOT_SUBMITTED');
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+    useEffect(() => {
+        const fetchStatus = async () => {
+            try {
+                const data = await kycService.getStatus();
+                setStatus(data.status);
+            } catch (error) {
+                console.error("Failed to fetch status:", error);
+            }
+        };
+        fetchStatus();
+    }, []);
 
     return (
         <div className="min-h-screen font-sans transition-colors duration-300 bg-blue-50/50 dark:bg-slate-950 text-foreground flex flex-col">
@@ -164,6 +179,8 @@ export function SellerLandingView() {
                                     <input
                                         className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-input bg-background checked:bg-foreground checked:border-foreground transition-all"
                                         type="checkbox"
+                                        checked={acceptedTerms}
+                                        onChange={(e) => setAcceptedTerms(e.target.checked)}
                                     />
                                     <span className="absolute text-background opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                                         <Check size={14} strokeWidth={3} />
@@ -231,16 +248,39 @@ export function SellerLandingView() {
 
                             {/* Actions */}
                             <div className="space-y-3">
-                                <Link href="/seller/kyc" className="w-full bg-foreground hover:bg-foreground/90 text-background py-3.5 px-6 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center gap-2 group">
-                                    Submit Application{" "}
-                                    <ArrowRight
-                                        size={16}
-                                        className="transition-transform group-hover:translate-x-1"
-                                    />
-                                </Link>
-                                <button className="w-full bg-transparent hover:bg-muted text-foreground py-3.5 px-6 rounded-xl font-medium transition-all border border-input">
-                                    Save Draft
-                                </button>
+                                {status === 'VERIFIED' ? (
+                                    <div className="w-full bg-green-600 text-white py-3.5 px-6 rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg shadow-green-500/20">
+                                        <ShieldCheck size={18} /> Verified Seller
+                                    </div>
+                                ) : status === 'PENDING' ? (
+                                    <div className="w-full bg-yellow-500 text-white py-3.5 px-6 rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg shadow-yellow-500/20">
+                                        <Clock size={18} /> Review in Progress
+                                    </div>
+                                ) : status === 'REJECTED' ? (
+                                    <Link
+                                        href={acceptedTerms ? "/seller/kyc" : "#"}
+                                        className={`w-full bg-red-600 hover:bg-red-700 text-white py-3.5 px-6 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center gap-2 group ${!acceptedTerms && 'opacity-50 cursor-not-allowed pointer-events-none'}`}
+                                    >
+                                        Re-submit Application <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        href={acceptedTerms ? "/seller/kyc" : "#"}
+                                        className={`w-full bg-foreground hover:bg-foreground/90 text-background py-3.5 px-6 rounded-xl font-medium transition-all shadow-lg flex items-center justify-center gap-2 group ${!acceptedTerms && 'opacity-50 cursor-not-allowed pointer-events-none'}`}
+                                    >
+                                        Submit Application{" "}
+                                        <ArrowRight
+                                            size={16}
+                                            className="transition-transform group-hover:translate-x-1"
+                                        />
+                                    </Link>
+                                )}
+
+                                {status === 'NOT_SUBMITTED' && (
+                                    <button className="w-full bg-transparent hover:bg-muted text-foreground py-3.5 px-6 rounded-xl font-medium transition-all border border-input">
+                                        Save Draft
+                                    </button>
+                                )}
                             </div>
 
                             {/* Info Box */}
@@ -251,10 +291,13 @@ export function SellerLandingView() {
                                         size={20}
                                     />
                                     <div className="text-sm text-blue-800 dark:text-blue-200">
-                                        <p className="font-medium mb-1">Approval Process</p>
+                                        <p className="font-medium mb-1">
+                                            {status === 'VERIFIED' ? 'Verification Success' : status === 'PENDING' ? 'Pending Verification' : 'Approval Process'}
+                                        </p>
                                         <p className="opacity-80 text-xs leading-relaxed">
-                                            Applications for seller accounts are reviewed by our
-                                            curation team within 48 hours.
+                                            {status === 'VERIFIED' ? 'Your account is fully verified. You can now start listing luxury assets.' :
+                                                status === 'PENDING' ? 'Our curation team is reviewing your documents. This usually takes 24-48 hours.' :
+                                                    'Applications for seller accounts are reviewed by our curation team within 48 hours.'}
                                         </p>
                                     </div>
                                 </div>

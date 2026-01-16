@@ -4,7 +4,7 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Edit, Ban, CheckCircle, Clock, FileText } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
-import { getSellerByIdThunk, verifySellerKycThunk, blockSellerThunk, assignSellerRoleThunk } from "@/store/features/admin/auth/admin.thunk";
+import { assignSellerRoleThunk, blockSellerThunk, getSellerByIdThunk, verifySellerKycThunk } from "@/store/features/admin/management/admin-management.thunk";
 
 export function SellerDetailView() {
     const params = useParams();

@@ -84,11 +84,12 @@ const authSlice = createSlice({
                 state.user = action.payload;
                 state.isAuthenticated = true;
                 state.isHydrated = true;
-            }).addCase(getCurrentUserThunk.rejected, (state) => {
+            }).addCase(getCurrentUserThunk.rejected, (state, action) => {
                 state.isLoading = false;
                 state.user = null;
                 state.isAuthenticated = false;
                 state.isHydrated = true;
+                state.error = action.payload as string || null;
             })
 
 

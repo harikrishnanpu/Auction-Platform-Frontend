@@ -2,16 +2,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
     getUsersThunk,
     getUserByIdThunk,
-    updateUserThunk,
-    blockUserThunk,
-    deleteUserThunk,
     getSellersThunk,
     getSellerByIdThunk,
-    verifySellerKycThunk,
-    blockSellerThunk,
-    assignSellerRoleThunk,
     getAdminStatsThunk
-} from './admin.thunk';
+} from './admin-management.thunk';
 
 interface AdminState {
     users: {
@@ -98,7 +92,6 @@ const adminSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        // Stats
         builder
             .addCase(getAdminStatsThunk.pending, (state) => {
                 state.stats.isLoading = true;

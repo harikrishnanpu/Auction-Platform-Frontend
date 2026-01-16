@@ -87,9 +87,11 @@ const LoginForm = () => {
                     </div>
 
 
-            {(errors.root || error ) && (
-                <div className="text-red-500 text-sm text-center bg-red-50 dark:bg-red-900/10 p-2 rounded">{errors.root?.message || error}</div>
-            )}
+                    {(errors.root || error) && (
+                        <div className="text-red-500 text-sm text-center bg-red-100 dark:bg-red-500/10 border border-red-200 dark:border-red-500/50 p-3 rounded-xl mb-4 font-medium animate-in fade-in slide-in-from-top-2">
+                            {errors.root?.message || error}
+                        </div>
+                    )}
 
                     {/* Submit Button */}
                     <button

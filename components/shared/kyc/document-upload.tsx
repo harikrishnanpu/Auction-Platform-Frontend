@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { kycService } from "@/features/kyc/services/kyc.service";
 
-interface UploadedFile {
+export interface UploadedFile {
     documentType: 'id_front' | 'id_back' | 'address_proof';
     fileKey: string;
     fileName: string;
@@ -19,11 +19,15 @@ interface UploadedFile {
     status: 'idle' | 'uploading' | 'success' | 'error';
 }
 
-export function DocumentUpload() {
+interface DocumentUploadProps {
+    uploadedFiles: UploadedFile[];
+    onUploadSuccess: (file: UploadedFile) => void;
+}
+
+export function DocumentUpload({ uploadedFiles, onUploadSuccess }: DocumentUploadProps) {
     const [idFrontFile, setIdFrontFile] = useState<File | null>(null);
     const [idBackFile, setIdBackFile] = useState<File | null>(null);
     const [addressProofFile, setAddressProofFile] = useState<File | null>(null);
-    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
     const [uploading, setUploading] = useState<string | null>(null);
 
     const idFrontInputRef = useRef<HTMLInputElement>(null);
@@ -68,6 +72,7 @@ export function DocumentUpload() {
                 documentType,
                 fileName: file.name,
                 contentType: file.type,
+                kycType: 'SELLER'
             });
 
             // Step 2: Upload file directly to S3
@@ -77,19 +82,17 @@ export function DocumentUpload() {
             await kycService.completeUpload({
                 documentType,
                 fileKey,
+                kycType: 'SELLER'
             });
 
-            // Update state
-            setUploadedFiles((prev) => [
-                ...prev.filter((f) => f.documentType !== documentType),
-                {
-                    documentType,
-                    fileKey,
-                    fileName: file.name,
-                    fileSize: file.size,
-                    status: 'success',
-                },
-            ]);
+            // Update state via callback
+            onUploadSuccess({
+                documentType,
+                fileKey,
+                fileName: file.name,
+                fileSize: file.size,
+                status: 'success',
+            });
 
             // Clear file input
             if (documentType === 'id_front') {
@@ -105,16 +108,14 @@ export function DocumentUpload() {
         } catch (error: any) {
             console.log('Upload error:', error);
             alert(error.response?.data?.message || 'Failed to upload file. Please try again.');
-            setUploadedFiles((prev) => [
-                ...prev.filter((f) => f.documentType !== documentType),
-                {
-                    documentType,
-                    fileKey: '',
-                    fileName: file.name,
-                    fileSize: file.size,
-                    status: 'error',
-                },
-            ]);
+
+            onUploadSuccess({
+                documentType,
+                fileKey: '',
+                fileName: file.name,
+                fileSize: file.size,
+                status: 'error',
+            });
         } finally {
             setUploading(null);
         }
@@ -167,13 +168,12 @@ export function DocumentUpload() {
                             />
                             <div
                                 onClick={() => !uploading && idFrontInputRef.current?.click()}
-                                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
-                                    uploading === 'id_front'
-                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-wait'
-                                        : idFrontFile || getUploadedFile('id_front')
+                                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${uploading === 'id_front'
+                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-wait'
+                                    : idFrontFile || getUploadedFile('id_front')
                                         ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                                         : 'border-border hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-muted/50'
-                                }`}
+                                    }`}
                             >
                                 {uploading === 'id_front' ? (
                                     <>
@@ -239,13 +239,12 @@ export function DocumentUpload() {
                             />
                             <div
                                 onClick={() => !uploading && idBackInputRef.current?.click()}
-                                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
-                                    uploading === 'id_back'
-                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-wait'
-                                        : idBackFile || getUploadedFile('id_back')
+                                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${uploading === 'id_back'
+                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-wait'
+                                    : idBackFile || getUploadedFile('id_back')
                                         ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                                         : 'border-border hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-muted/50'
-                                }`}
+                                    }`}
                             >
                                 {uploading === 'id_back' ? (
                                     <>
@@ -316,13 +315,12 @@ export function DocumentUpload() {
                     />
                     <div
                         onClick={() => !uploading && addressProofInputRef.current?.click()}
-                        className={`border-2 border-dashed rounded-xl p-4 cursor-pointer transition-all ${
-                            uploading === 'address_proof'
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-wait'
-                                : addressProofFile || getUploadedFile('address_proof')
+                        className={`border-2 border-dashed rounded-xl p-4 cursor-pointer transition-all ${uploading === 'address_proof'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-wait'
+                            : addressProofFile || getUploadedFile('address_proof')
                                 ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                                 : 'border-border hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-muted/50'
-                        }`}
+                            }`}
                     >
                         {uploading === 'address_proof' ? (
                             <div className="flex items-center gap-4">

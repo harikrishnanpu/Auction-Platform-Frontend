@@ -16,24 +16,57 @@ export function VerifyEmailForm() {
 
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [isVerifying, setIsVerifying] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(10);
+    const [timeLeft, setTimeLeft] = useState(0);
+    const [resendCount, setResendCount] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     const dispatch = useAppDispatch();
 
+    const RESEND_INTERVALS = [10, 20, 60, 120];
+    const TIMER_KEY = `verify_timer`;
+
     useEffect(() => {
         if (!email) {
             setError("Email is missing from the verification request.");
+            return;
         }
 
+        const stored = localStorage.getItem(TIMER_KEY!);
+        let targetTime: number;
+        let count = 0;
+
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            targetTime = parsed.expiresAt;
+            count = parsed.count;
+            setResendCount(count);
+        } else {
+            const duration = RESEND_INTERVALS[0];
+            targetTime = Date.now() + duration * 1000;
+            localStorage.setItem(TIMER_KEY!, JSON.stringify({ expiresAt: targetTime, count: 0 }));
+            setResendCount(0);
+        }
+
+        const calculateTimeLeft = () => {
+            const now = Date.now();
+            const diff = Math.max(0, Math.floor((targetTime - now) / 1000));
+            setTimeLeft(diff);
+            return diff;
+        };
+
+        calculateTimeLeft();
+
         const timer = setInterval(() => {
-            setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+            const remaining = calculateTimeLeft();
+            if (remaining <= 0) {
+                clearInterval(timer);
+            }
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [email]);
+    }, [email, TIMER_KEY]);
 
     const handleChange = (target: EventTarget & HTMLInputElement, index: number) => {
         const val = target.value;
@@ -89,6 +122,7 @@ export function VerifyEmailForm() {
             await dispatch(verifyEmailThunk({ email, otp: otpCode })).unwrap();
             setSuccess("Email verified successfully! Redirecting...");
             toast.success("Email verified successfully!");
+            if (TIMER_KEY) localStorage.removeItem(TIMER_KEY);
             router.push("/home");
         } catch (err: any) {
             const msg = typeof err === 'string' ? err : (err.response?.data?.message || "Verification failed. Please try again.");
@@ -100,10 +134,23 @@ export function VerifyEmailForm() {
     };
 
     const handleResend = async () => {
-        if (!email) return;
+        if (!email || !TIMER_KEY) return;
         try {
             await authService.resendOtp({ email });
-            setTimeLeft(600); // Reset timer to 10 mins
+
+            // Increment resend count and update timer
+            const nextCount = resendCount + 1;
+            const duration = RESEND_INTERVALS[Math.min(nextCount, RESEND_INTERVALS.length - 1)];
+            const targetTime = Date.now() + duration * 1000;
+
+            localStorage.setItem(TIMER_KEY, JSON.stringify({
+                expiresAt: targetTime,
+                count: nextCount
+            }));
+
+            setResendCount(nextCount);
+            setTimeLeft(duration);
+
             setError(null);
             setSuccess("A new verification code has been sent.");
             toast.success("OTP resent successfully!");

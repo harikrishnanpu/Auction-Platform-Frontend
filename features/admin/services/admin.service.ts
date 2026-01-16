@@ -1,8 +1,12 @@
 import api from "@/lib/axios";
 
 export const adminService = {
-    async getUsers(page: number = 1, limit: number = 10) {
-        const response = await api.get(`/admin/users?page=${page}&limit=${limit}`);
+    async getUsers(page: number = 1, limit: number = 10, search?: string, sortBy?: string, sortOrder?: 'asc' | 'desc') {
+        let url = `/admin/users?page=${page}&limit=${limit}`;
+        if (search) url += `&search=${search}`;
+        if (sortBy) url += `&sortBy=${sortBy}`;
+        if (sortOrder) url += `&sortOrder=${sortOrder}`;
+        const response = await api.get(url);
         return response.data;
     },
 

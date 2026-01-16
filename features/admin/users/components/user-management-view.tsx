@@ -4,14 +4,18 @@ import React, { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
-import { getUsersThunk, blockUserThunk, getAdminStatsThunk } from "@/store/features/admin/auth/admin.thunk";
 import { UserStats } from "./user-stats";
 import { UserFilters } from "./user-filters";
 import { UserTable } from "./user-table";
+import { blockUserThunk, getAdminStatsThunk, getUsersThunk } from "@/store/features/admin/management/admin-management.thunk";
 
 export function UserManagementView() {
+
     const dispatch = useAppDispatch();
     const [page, setPage] = React.useState(1);
+    const [search, setSearch] = React.useState("");
+    const [sortBy, setSortBy] = React.useState("created_at");
+    const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>("desc");
 
     const users = useAppSelector((state: any) => state.admin?.users?.users || []);
     const loading = useAppSelector((state: any) => state.admin?.users?.isLoading || false);
@@ -20,23 +24,34 @@ export function UserManagementView() {
     const stats = useAppSelector((state: any) => state.admin?.stats?.data || null);
 
     useEffect(() => {
-        dispatch(getUsersThunk({ page, limit: 10 }));
+        dispatch(getUsersThunk({ page, limit: 10, search, sortBy, sortOrder }));
         dispatch(getAdminStatsThunk());
-    }, [page, dispatch]);
+    }, [page, search, sortBy, sortOrder, dispatch]);
 
     const handleBlockUser = async (id: string, block: boolean) => {
         try {
             await dispatch(blockUserThunk({ id, block })).unwrap();
-            dispatch(getUsersThunk({ page, limit: 10 }));
+            dispatch(getUsersThunk({ page, limit: 10, search, sortBy, sortOrder }));
             dispatch(getAdminStatsThunk());
         } catch (error) {
             console.log("Failed to block/unblock user", error);
         }
     };
 
+    const handleSort = (newSortBy: string, newSortOrder: 'asc' | 'desc') => {
+        setSortBy(newSortBy);
+        setSortOrder(newSortOrder);
+        setPage(1);
+    };
+
+    const handleSearch = (newSearch: string) => {
+        setSearch(newSearch);
+        setPage(1);
+    };
+
     return (
-        <div className="font-sans transition-colors duration-300 bg-background text-foreground animate-in fade-in duration-500">
-            {/* Header */}
+        <div className="font-sans mt-5 px-2 container align-middle justify-center mx-auto min-h-screen transition-colors duration-300 bg-transparent text-foreground animate-in fade-in duration-500">
+
             <div className="mb-8">
                 <div className="flex items-center text-sm text-muted-foreground mb-2">
                     <Link
@@ -62,7 +77,12 @@ export function UserManagementView() {
             </div>
 
             <UserStats stats={stats} />
-            <UserFilters />
+            <UserFilters
+                onSearch={handleSearch}
+                onSort={handleSort}
+                currentSortBy={sortBy}
+                currentSortOrder={sortOrder}
+            />
             <UserTable
                 users={users}
                 loading={loading}
